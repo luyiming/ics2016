@@ -38,6 +38,7 @@ static int cmd_q(char *args) {
 
 static int cmd_help(char *args);
 static int cmd_si(char *args);
+static int cmd_info(char *args);
 
 static struct {
 	char *name;
@@ -48,6 +49,7 @@ static struct {
 	{ "c", "Continue the execution of the program", cmd_c },
 	{ "q", "Exit NEMU", cmd_q },
 	{ "si", "Step one instruction exactly", cmd_si },
+	{ "info", "Show information", cmd_info },
 
 	/* TODO: Add more commands */
 
@@ -87,6 +89,23 @@ static int cmd_si(char *args) {
     cpu_exec(n);
     return 0;
 }
+
+static int cmd_info(char *args) {
+    char *arg = strtok(NULL, " ");
+
+    if(strcmp(arg, "r") == 0) {
+        int i;
+        for(i = R_EAX; i <= R_EDI; i++) {
+            printf("%s    0x%08x\n", regsl[i], reg_l(i));
+        }
+        printf("eip    0x%08x\n", cpu.eip);
+    }
+    else {
+        printf("Usage: info r/w\n");
+    }
+    return 0;
+}
+
 
 void ui_mainloop() {
 	while(1) {
