@@ -39,6 +39,8 @@ static int cmd_q(char *args) {
 static int cmd_help(char *args);
 static int cmd_si(char *args);
 static int cmd_info(char *args);
+static int cmd_x(char *args);
+static int cmd_p(char *args);
 
 static struct {
 	char *name;
@@ -50,6 +52,8 @@ static struct {
 	{ "q", "Exit NEMU", cmd_q },
 	{ "si", "Step one instruction exactly", cmd_si },
 	{ "info", "Show information", cmd_info },
+	{ "x", "Examine memory", cmd_x },
+	{ "p", "Print expression", cmd_p },
 
 	/* TODO: Add more commands */
 
@@ -106,6 +110,40 @@ static int cmd_info(char *args) {
     return 0;
 }
 
+static int cmd_x(char *args) {
+    char *arg = strtok(NULL, " ");
+    int i, n;
+    n = atoi(arg);
+    if(n == 0)
+        n = 1;
+    else
+        arg = strtok(NULL, " ");
+    bool success = false;
+    uint32_t t_addr = expr(arg, &success);
+    for(i = 0; i < n; i ++)
+    {
+        printf("%8x :\t0x%08x\t", t_addr + 4 * i, swaddr_read(t_addr + 4 * i, 4));
+        int j;
+        for(j = 0; j < 4; j ++) {
+            printf("%02x ", swaddr_read(t_addr + 4 * i + j, 1));
+        }
+        printf("\n");
+    }
+    return 0;
+}
+
+static int cmd_p(char *args) {
+    if(args) {
+        bool success = false;
+        int value = expr(args, &success);
+        if(success) {
+            printf("%d\t\t0x%x\n", value, value);
+        }
+        else
+            printf("Bad expression\n");
+    }
+    return 0;
+}
 
 void ui_mainloop() {
 	while(1) {
