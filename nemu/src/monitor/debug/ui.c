@@ -113,13 +113,19 @@ static int cmd_si(char *args) {
 
 static int cmd_info(char *args) {
     char *arg = strtok(NULL, " ");
-
+	if(arg == NULL) {
+		printf("null\n");
+		return 0;
+	}
     if(strcmp(arg, "r") == 0) {
         int i;
         for(i = R_EAX; i <= R_EDI; i++) {
             printf("%s    0x%08x\n", regsl[i], reg_l(i));
         }
         printf("eip    0x%08x\n", cpu.eip);
+    }
+	else if(strcmp(arg, "w") == 0) {
+        print_wp();
     }
     else {
         printf("Usage: info r/w\n");
