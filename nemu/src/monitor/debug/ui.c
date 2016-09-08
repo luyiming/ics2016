@@ -12,17 +12,30 @@ void cpu_exec(uint32_t);
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 char* rl_gets() {
 	static char *line_read = NULL;
+    char *temp_line = NULL;
 
-	if (line_read) {
-		free(line_read);
-		line_read = NULL;
-	}
+	temp_line = readline("(nemu) ");
 
-	line_read = readline("(nemu) ");
+    int i, valid = 0, len = strlen(temp_line);
+    for(i = 0; i < len; i++) {
+        if(!isspace(temp_line[i])) {
+            valid = 1;
+            break;
+        }
+    }
 
-	if (line_read && *line_read) {
-		add_history(line_read);
-	}
+    if(valid) {
+        if(line_read) {
+            free(line_read);
+        }
+        line_read = temp_line;
+        add_history(line_read);
+    }
+    else {
+        if(temp_line) {
+            free(temp_line);
+        }
+    }
 
 	return line_read;
 }
@@ -41,6 +54,8 @@ static int cmd_si(char *args);
 static int cmd_info(char *args);
 static int cmd_x(char *args);
 static int cmd_p(char *args);
+static int cmd_w(char *args);
+static int cmd_d(char *args);
 
 static struct {
 	char *name;
@@ -54,6 +69,8 @@ static struct {
 	{ "info", "Show information", cmd_info },
 	{ "x", "Examine memory", cmd_x },
 	{ "p", "Print expression", cmd_p },
+	{ "w", "Set watchpoint", cmd_w },
+	{ "d", "Delete watchpoint", cmd_d },
 
 	/* TODO: Add more commands */
 
@@ -141,6 +158,41 @@ static int cmd_p(char *args) {
         }
         else
             printf("Bad expression\n");
+    }
+    return 0;
+}
+
+static int cmd_w(char *args) {
+    WP *wp = new_wp();
+    if(wp == NULL) {
+        printf("no more watchpoint\n");
+    }
+    else {
+        bool success = false;
+        wp->value = expr(args, &success);
+        if(!success) {
+            printf("bad expression\n");
+            free_wp(wp->NO);
+        }
+        else {
+            strcpy(wp->str, args);
+            printf("watchpoint #%d\tvalue:%d/0x%x\t\texpr:%s\n", wp->NO, wp->value, wp->value, wp->str);
+        }
+    }
+    return 0;
+}
+
+static int cmd_d(char *args) {
+    char *arg = strtok(NULL, " ");
+    int n = atoi(arg);
+    if(n == 0) {
+        printf("syntax error. Usage d [N]\n");
+    }
+    else {
+        if(free_wp(n))
+            printf("delete watchpoint #%d\n", n);
+        else
+            printf("cannot find watchpoint #%d\n", n);
     }
     return 0;
 }
