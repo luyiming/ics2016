@@ -28,6 +28,34 @@ typedef struct {
         };
     };
 
+    union {
+        struct {        //    init      description
+            unsigned  CF: 1; // 0 * S   Carry Flag
+            unsigned    : 1; // 1
+            unsigned  PF: 1; // 0 * S   Parity Flag
+            unsigned    : 1; // 0
+            unsigned  AF: 1; // 0   S   Auxiliary Carry Flag
+            unsigned    : 1; // 0
+            unsigned  ZF: 1; // 0 * S   Zero Flag
+            unsigned  SF: 1; // 0 * S   Sign Flag
+            unsigned  TF: 1; // 0   X   Trap Flag
+            unsigned  IF: 1; // 0   X   Interrupt Enable Flag
+            unsigned  DF: 1; // 0   C   Direction Flag
+            unsigned  OF: 1; // 0 * S   Overflow Flag
+           unsigned IOPL: 2; // 0   X   I/O Privilege Level
+            unsigned  NT: 1; // 0   X   Nested Task
+            unsigned    : 1; // 0
+            unsigned  RF: 1; // 0   X   Resume Flag
+            unsigned  VM: 1; // 0   X   Virtual-8086 Mode
+            unsigned  AC: 1; // 0   X   Alignment Check
+            unsigned VIF: 1; // 0   X   Virtual Interrupt Flag
+            unsigned VIP: 1; // 0   X   Virtual Interrupt Pending
+            unsigned  ID: 1; // 0   X   Identification Flag
+            unsigned    :10; // 0
+        };
+        uint32_t eflags;
+    };
+
 	swaddr_t eip;
 
 } CPU_state;

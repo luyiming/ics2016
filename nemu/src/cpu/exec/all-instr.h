@@ -2,6 +2,7 @@
 
 #include "data-mov/mov.h"
 #include "data-mov/xchg.h"
+#include "data-mov/push.h"
 
 #include "arith/dec.h"
 #include "arith/inc.h"
@@ -23,5 +24,7 @@
 #include "string/rep.h"
 
 #include "misc/misc.h"
+
+#include "transer/call.h"
 
 #include "special/special.h"
