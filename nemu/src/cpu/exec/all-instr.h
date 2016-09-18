@@ -27,6 +27,7 @@
 
 #include "misc/misc.h"
 
-#include "transer/call.h"
+#include "transfer/call.h"
+#include "transfer/jcc.h"
 
 #include "special/special.h"
