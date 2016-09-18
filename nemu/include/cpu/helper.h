@@ -26,5 +26,9 @@ extern Operands ops_decoded;
 #define op_src2 (&ops_decoded.src2)
 #define op_dest (&ops_decoded.dest)
 
+#define get_parity(n) \
+    (((n) & 0x1) + (((n) & 0x2) >> 1) + (((n) & 0x4) >> 2) + \
+    (((n) & 0x8) >> 3)+ (((n) & 0x16)>> 4) + (((n) & 0x32)>> 5) + \
+    (((n) & 0x64)>> 6) + (((n) & 0x128)>>7)) % 2
 
 #endif
