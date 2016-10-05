@@ -32,5 +32,6 @@
 #include "transfer/call.h"
 #include "transfer/jcc.h"
 #include "transfer/ret.h"
+#include "transfer/jmp.h"
 
 #include "special/special.h"
