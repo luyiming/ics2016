@@ -9,7 +9,7 @@ static void do_execute () {
     /*  Update EFLAGS. */
     cpu.CF = (op_dest->val > result || op_src->val > result ? 1 : 0);
     cpu.PF = get_parity(result);
-    cpu.AF = 1;
+    cpu.AF = 0;
     cpu.ZF = (result == 0 ? 1 : 0);
     cpu.SF = MSB(result);
 
