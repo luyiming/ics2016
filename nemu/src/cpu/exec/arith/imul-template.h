@@ -15,7 +15,7 @@ static void do_execute() {
 	RET_DATA_TYPE result = (RET_DATA_TYPE)op_src->val * (RET_DATA_TYPE)op_src2->val;
 	OPERAND_W(op_dest, result);
 
-	/* There is no need to update EFLAGS, since no other instructions 
+	/* There is no need to update EFLAGS, since no other instructions
 	 * in PA will test the flags updated by this instruction.
 	 */
 
@@ -47,7 +47,7 @@ make_helper(concat(imul_rm2a_, SUFFIX)) {
 	REG(R_EDX) = result >> 32;
 #endif
 
-	/* There is no need to update EFLAGS, since no other instructions 
+	/* There is no need to update EFLAGS, since no other instructions
 	 * in PA will test the flags updated by this instruction.
 	 */
 
