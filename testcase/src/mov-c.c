@@ -9,10 +9,10 @@ int main() {
 	A[2] = 2;
 	A[3] = 3;
 	A[4] = 4;
-
+	set_bp();
 	b = A[3];
 	A[5] = b;
-	
+
 	nemu_assert(A[0] == 0);
 	nemu_assert(A[1] == 1);
 	nemu_assert(A[2] == 2);
