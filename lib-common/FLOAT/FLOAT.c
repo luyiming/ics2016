@@ -25,7 +25,7 @@ FLOAT F_div_F(FLOAT a, FLOAT b) {
 	 * It is OK not to use the template above, but you should figure
 	 * out another way to perform the division.
 	 */
-
+/*
 	long long A = Fabs(a);
 	long long B = Fabs(b);
 	int c;
@@ -43,7 +43,8 @@ FLOAT F_div_F(FLOAT a, FLOAT b) {
 		c --;
 	}
 	if ((a < 0 &&  b > 0) || (a > 0 && b < 0)) ans = -ans;
-	return ans;
+	return ans;*/
+	return (a / b) << 16;
 }
 
 FLOAT f2F(float a) {
@@ -56,7 +57,7 @@ FLOAT f2F(float a) {
 	 * stack. How do you retrieve it to another variable without
 	 * performing arithmetic operations on it directly?
 	 */
-/*
+
 	int p = *(int*)&a;
 	int res = p & 0x7fffff;
 	int e = (p >> 23) & 0xff;
@@ -71,7 +72,8 @@ FLOAT f2F(float a) {
 		res <<= e;
 	else
 		res >>= (-e);
-	return res; */
+	return res;
+	/*
 	int i, uf, m, e, s, ans;
 	uf = *(int*)&a;
 	m = uf & ((1 << 23) - 1);
@@ -84,7 +86,7 @@ FLOAT f2F(float a) {
 		m = m << 1;
 	}
 	if (s != 0) ans = (~ans) + 1;
-	return (FLOAT)(ans);
+	return (FLOAT)(ans);*/
 }
 
 FLOAT Fabs(FLOAT a) {

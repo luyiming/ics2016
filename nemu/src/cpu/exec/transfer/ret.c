@@ -5,8 +5,8 @@ make_helper(ret) {
     cpu.esp += 4;
 
     print_asm("ret");
-    // cpu.eip--;
-    return 0; // eip = eip + 1
+    cpu.eip--;
+    return 1; // eip = eip + 1
 }
 
 make_helper(ret_imm) {
