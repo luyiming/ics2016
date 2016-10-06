@@ -11,11 +11,9 @@ $(FLOAT): $(FLOAT_A_OBJ)
 	ar r $@ $^
 
 $(FLOAT_O): $(LIB_COMMON_DIR)/FLOAT.h $(LIB_COMMON_DIR)/FLOAT/FLOAT.c
-	mkdir -p obj/lib-common
 	mkdir -p obj/lib-common/FLOAT
 	gcc -c lib-common/FLOAT/FLOAT.c -o obj/lib-common/FLOAT/FLOAT.o $(float_CFLAGS)
 
 $(FLOAT_VFPRINTF_O): $(LIB_COMMON_DIR)/FLOAT/FLOAT_vfprintf.c
-	mkdir -p obj/lib-common
 	mkdir -p obj/lib-common/FLOAT
 	gcc -c lib-common/FLOAT/FLOAT_vfprintf.c -o obj/lib-common/FLOAT/FLOAT_vfprintf.o $(float_CFLAGS)
