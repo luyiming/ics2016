@@ -25,7 +25,7 @@ FLOAT F_div_F(FLOAT a, FLOAT b) {
 	 * It is OK not to use the template above, but you should figure
 	 * out another way to perform the division.
 	 */
-/*
+
 	long long A = Fabs(a);
 	long long B = Fabs(b);
 	int c;
@@ -43,8 +43,7 @@ FLOAT F_div_F(FLOAT a, FLOAT b) {
 		c --;
 	}
 	if ((a < 0 &&  b > 0) || (a > 0 && b < 0)) ans = -ans;
-	return ans;*/
-	return (a / b) << 16;
+	return ans;
 }
 
 FLOAT f2F(float a) {
