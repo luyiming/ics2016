@@ -20,7 +20,8 @@ make_helper(call_rm_w) {
     cpu.eip = op_src->val;
 
     print_asm("call *%%%s(0x%x)", regsw[op_src->reg], cpu.eip);
-    return 0; // eip has been updated
+    cpu.eip -= (1 + len);
+    return 1 + len; // eip has been updated
 }
 
 make_helper(call_rm_l) {
@@ -32,7 +33,8 @@ make_helper(call_rm_l) {
     cpu.eip = op_src->val;
 
     print_asm("call *%%%s(0x%x)", regsl[op_src->reg], cpu.eip);
-    return 0; // eip has been updated
+    cpu.eip -= (1 + len);
+    return 1 + len; // eip has been updated
 }
 
 make_helper(call_rm_v) {

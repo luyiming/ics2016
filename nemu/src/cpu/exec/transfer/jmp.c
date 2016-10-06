@@ -22,17 +22,19 @@ make_helper(jmp_i_l) {
 }
 
 make_helper(jmp_rm_w) {
-    decode_rm_w(eip + 1);
+    int len = decode_rm_w(eip + 1);
     cpu.eip = op_src->val;
     print_asm("jmp 0x%x", cpu.eip);
-    return 0; // eip has been updated
+    cpu.eip -= (1 + len);
+    return 1 + len; // eip has been updated
 }
 
 make_helper(jmp_rm_l) {
-    decode_rm_l(eip + 1);
+    int len = decode_rm_l(eip + 1);
     cpu.eip = op_src->val;
     print_asm("jmp 0x%x", cpu.eip);
-    return 0;  // eip has been updated
+    cpu.eip -= (1 + len);
+    return 1 + len;  // eip has been updated
 }
 
 /* for instruction encoding overloading */
