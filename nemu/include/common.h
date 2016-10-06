@@ -31,7 +31,7 @@ typedef union {
 	uint8_t _1;
 } unalign;
 #pragma pack ()
-//
+
 #define false 0
 #define true 1
 
