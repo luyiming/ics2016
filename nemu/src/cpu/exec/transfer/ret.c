@@ -5,7 +5,8 @@ make_helper(ret) {
     cpu.esp += 4;
 
     print_asm("ret");
-    return 0; // eip has been updated
+    cpu.eip--;
+    return 1; // eip = eip + 1
 }
 
 make_helper(ret_imm) {
@@ -14,5 +15,6 @@ make_helper(ret_imm) {
     cpu.esp = cpu.esp + 4 + rel;
 
     print_asm("ret 0x%x", rel);
-    return 0; // eip has been updated
+    cpu.eip -= 3;
+    return 1 + 2; // eip = eip + 3
 }

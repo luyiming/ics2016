@@ -26,7 +26,7 @@ make_helper(jmp_rm_w) {
     cpu.eip = op_src->val;
     print_asm("jmp 0x%x", cpu.eip);
     cpu.eip -= (1 + len);
-    return 1 + len; // eip has been updated
+    return 1 + len; // eip = eip + 1 + len
 }
 
 make_helper(jmp_rm_l) {
@@ -34,7 +34,7 @@ make_helper(jmp_rm_l) {
     cpu.eip = op_src->val;
     print_asm("jmp 0x%x", cpu.eip);
     cpu.eip -= (1 + len);
-    return 1 + len;  // eip has been updated
+    return 1 + len;  // eip = eip + 1 + len
 }
 
 /* for instruction encoding overloading */

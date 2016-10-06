@@ -1,7 +1,10 @@
 #include "FLOAT.h"
 
 FLOAT F_mul_F(FLOAT a, FLOAT b) {
-	return a * b / (1 << 16);
+	long long A = a;
+	long long B = b;
+	long long ans = A * B;
+	return ans >> 16;
 }
 
 FLOAT F_div_F(FLOAT a, FLOAT b) {
@@ -23,7 +26,24 @@ FLOAT F_div_F(FLOAT a, FLOAT b) {
 	 * out another way to perform the division.
 	 */
 
-	return a * (1 << 16) / b;
+	long long A = Fabs(a);
+	long long B = Fabs(b);
+	int c;
+	FLOAT ans = 0;;
+	A <<= 16;
+	B <<= 16;
+	c = 16;
+	while(A != 0) {
+		if (A >= B) {
+			A = A - B;
+			ans = ans | (1 << c);
+		}
+		if (c == 0) break;
+		B = B >> 1;
+		c --;
+	}
+	if ((a < 0 &&  b > 0) || (a > 0 && b < 0)) ans = -ans;
+	return ans;
 }
 
 FLOAT f2F(float a) {
