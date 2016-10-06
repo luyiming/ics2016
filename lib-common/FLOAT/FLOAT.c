@@ -29,8 +29,8 @@ FLOAT F_div_F(FLOAT a, FLOAT b) {
 	long long A = Fabs(a);
 	A <<= 16;
  	int B = Fabs(b);
-	int A_h = A >> 32;
-	int A_l = A & 0xffffffff;
+	int A_h = A >> 32; // high 32 bits of A
+	int A_l = A & 0xffffffff; // low 32 bits of A
 	int res, rem;
 	asm volatile ("div %2" : "=a"(res), "=d"(rem) : "r"(B), "a"(A_l), "d"(A_h));
 	if ((a < 0 &&  b > 0) || (a > 0 && b < 0)) res = -res;
@@ -39,21 +39,21 @@ FLOAT F_div_F(FLOAT a, FLOAT b) {
 	long long A = Fabs(a);
 	long long B = Fabs(b);
 	int c;
-	FLOAT ans = 0;;
+	FLOAT res = 0;;
 	A <<= 16;
 	B <<= 16;
 	c = 16;
 	while(A != 0) {
 		if (A >= B) {
 			A = A - B;
-			ans = ans | (1 << c);
+			res = res | (1 << c);
 		}
 		if (c == 0) break;
 		B = B >> 1;
 		c --;
 	}
-	if ((a < 0 &&  b > 0) || (a > 0 && b < 0)) ans = -ans;
-	return ans;*/
+	if ((a < 0 &&  b > 0) || (a > 0 && b < 0)) res = -res;
+	return res;*/
 }
 
 FLOAT f2F(float a) {
