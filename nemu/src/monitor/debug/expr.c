@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <regex.h>
 
+extern int get_symbol_value(const char *);
 
 
 enum {
@@ -405,7 +406,7 @@ static int calc() {
             // printf("get num: %d\n", value);
             v_st[++v_top] = value;
         }
-/*		else if(tokens[i].type == VAR) {
+        else if(tokens[i].type == VAR) {
 			int value = get_symbol_value(tokens[i].str);
 			if(value == -1) {
 				success = false;
@@ -414,7 +415,7 @@ static int calc() {
 			}
 			else
 				v_st[++v_top] = value;
-		} */
+		}
         else if(tokens[i].type == REG) {
             int value = 0;
             int j;
