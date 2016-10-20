@@ -57,6 +57,7 @@ static int cmd_x(char *args);
 static int cmd_p(char *args);
 static int cmd_w(char *args);
 static int cmd_d(char *args);
+static int cmd_bt(char *args);
 
 static struct {
 	char *name;
@@ -72,6 +73,7 @@ static struct {
 	{ "p", "Print expression", cmd_p },
 	{ "w", "Set watchpoint", cmd_w },
 	{ "d", "Delete watchpoint", cmd_d },
+	{ "bt", "Print stack chain", cmd_bt },
 
 	/* TODO: Add more commands */
 
@@ -201,6 +203,32 @@ static int cmd_d(char *args) {
         else
             printf("cannot find watchpoint #%d\n", n);
     }
+    return 0;
+}
+
+static int cmd_bt(char *args) {
+	uint32_t cur_ebp = cpu.ebp;
+	swaddr_t ret_addr = 0;
+	uint32_t func_args[4] = {0};
+	char* func_name;
+	int cnt = 0;
+	do {
+		int i;
+		for(i = 0; i < 4; i ++) {
+			func_args[i] = swaddr_read(cur_ebp + 8 + 4 * i, 4);
+		}
+		if(cnt == 0)
+			func_name = get_symbol_name(cpu.eip);
+		else
+			func_name = get_symbol_name(ret_addr);
+		if(cnt == 0)
+			printf("#%d  %s (%x, %x, %x, %x)\n", cnt, func_name, func_args[0], func_args[1], func_args[2], func_args[3]);
+		else
+			printf("#%d  0x%x in %s (%x, %x, %x, %x)\n", cnt, ret_addr, func_name, func_args[0], func_args[1], func_args[2], func_args[3]);
+		cur_ebp = swaddr_read(cur_ebp, 4);
+		ret_addr = swaddr_read(cur_ebp + 4, 4);
+		cnt++;
+	} while(cur_ebp != 0);
     return 0;
 }
 

@@ -9,13 +9,26 @@ static Elf32_Sym *symtab = NULL;
 static int nr_symtab_entry;
 
 int get_symbol_value(const char * str) {
-    int j;
-    for(j = 0; j < nr_symtab_entry; j++) {
-        if(symtab[j].st_info == 17 && strcmp(str, strtab + symtab[j].st_name) == 0) {
-            return symtab[j].st_value;
-        }
-    }
-    return -1;
+	int j;
+	for(j = 0; j < nr_symtab_entry; j++) {
+		if(symtab[j].st_info == 17 && strcmp(str, strtab + symtab[j].st_name) == 0) {
+			/*
+			STT_OBJECT 1
+			STT_FUNC 2
+			STT_SECTION 3
+			STT_FILE 4
+			STB_GLOBAL 1
+			STB_LOCAL 0
+			STT_NOTYPE 0
+			STB_WEAK 2
+			STT_LOPROC 13
+			STT_HIPROC 15
+			STB_WEAK 2
+			*/
+			return symtab[j].st_value;
+		}
+	}
+	return -1;
 }
 
 char* get_symbol_name(uint32_t addr) {
@@ -76,7 +89,7 @@ void load_elf_tables(int argc, char *argv[]) {
 
 	int i;
 	for(i = 0; i < elf->e_shnum; i ++) {
-		if(sh[i].sh_type == SHT_SYMTAB && 
+		if(sh[i].sh_type == SHT_SYMTAB &&
 				strcmp(shstrtab + sh[i].sh_name, ".symtab") == 0) {
 			/* Load symbol table from exec_file */
 			symtab = malloc(sh[i].sh_size);
@@ -85,7 +98,7 @@ void load_elf_tables(int argc, char *argv[]) {
 			assert(ret == 1);
 			nr_symtab_entry = sh[i].sh_size / sizeof(symtab[0]);
 		}
-		else if(sh[i].sh_type == SHT_STRTAB && 
+		else if(sh[i].sh_type == SHT_STRTAB &&
 				strcmp(shstrtab + sh[i].sh_name, ".strtab") == 0) {
 			/* Load string table from exec_file */
 			strtab = malloc(sh[i].sh_size);
@@ -102,4 +115,3 @@ void load_elf_tables(int argc, char *argv[]) {
 
 	fclose(fp);
 }
-
