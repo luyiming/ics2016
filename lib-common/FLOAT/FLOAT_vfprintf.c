@@ -15,7 +15,7 @@ __attribute__((used)) static int format_FLOAT(FILE *stream, FLOAT f) {
 	 *         0x00010000    "1.000000"
 	 *         0x00013333    "1.199996"
 	 */
-	fwrite ("hello",1,5,stream);
+	//fprintf(stream, "%x", *(int*)f);
 	char buf[80];
 	int len = sprintf(buf, "0x%08x", f);
 	return __stdio_fwrite(buf, len, stream);
@@ -69,6 +69,21 @@ static void modify_vfprintf() {
 	mprotect((void*)((p-100)&0xfffff000), 4096*2, PROT_READ|PROT_WRITE|PROT_EXEC);
 	int32_t o = (int32_t)&format_FLOAT - (int32_t)&_fpmaxtostr;
 	*(int32_t*)(p + 1) = *(int32_t*)(p + 1) + o;
+	// push (%edx)
+	// opcode 50 + r = 52
+	/*
+	8048854:	83 ec 0c             	sub    $0xc,%esp
+    8048857:	db 3c 24             	fstpt  (%esp)
+    804885a:	ff b4 24 8c 01 00 00 	pushl  0x18c(%esp)
+
+	8048854:	83 ec 08             	sub    $0x8,%esp
+	8048857:	52                   	push   %edx
+	8048858:	90                      nop
+	8048859:	90                      nop
+	804885a:	ff b4 24 8c 01 00 00 	pushl  0x18c(%esp)
+p:	8048861:	e8 d8 0e 00 00       	call   804973e <_fpmaxtostr>
+	*/
+	*(uint32_t*)(p - 7 - 4) = 0x90905208;
 }
 
 static void modify_ppfs_setargs() {
