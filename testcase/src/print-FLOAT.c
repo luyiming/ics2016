@@ -23,8 +23,7 @@ int main() {
 	sprintf(buf, "%f %d", FLOAT_ARG(0xfffecccd), 123456);
 	nemu_assert(strcmp(buf, "-1.199996 123456") == 0);
 	*/
-	sprintf(buf, "%f", FLOAT_ARG(0xfffecccd));
-	nemu_assert(strcmp(buf, "-1.199996") == 0);
+
 #endif
 
 	return 0;
