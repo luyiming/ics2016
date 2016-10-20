@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <sys/mman.h>
 #include "FLOAT.h"
 
 extern char _vfprintf_internal;
@@ -14,7 +15,7 @@ __attribute__((used)) static int format_FLOAT(FILE *stream, FLOAT f) {
 	 *         0x00010000    "1.000000"
 	 *         0x00013333    "1.199996"
 	 */
-
+	fwrite ("hello",1,5,stream);
 	char buf[80];
 	int len = sprintf(buf, "0x%08x", f);
 	return __stdio_fwrite(buf, len, stream);
@@ -64,6 +65,10 @@ static void modify_vfprintf() {
 	} else if (ppfs->conv_num <= CONV_S) {  /* wide char or string */
 #endif
 
+	int32_t p = (int32_t)&_vfprintf_internal + 0x8048861 - 0x804855b;
+	mprotect((void*)((p-100)&0xfffff000), 4096*2, PROT_READ|PROT_WRITE|PROT_EXEC);
+	int32_t o = (int32_t)&format_FLOAT - (int32_t)&_fpmaxtostr;
+	*(int32_t*)(p + 1) = *(int32_t*)(p + 1) + o;
 }
 
 static void modify_ppfs_setargs() {
