@@ -5,6 +5,7 @@
 
 extern char _vfprintf_internal;
 extern char _fpmaxtostr;
+extern char _ppfs_setargs;
 extern int __stdio_fwrite(char *buf, int len, FILE *stream);
 
 __attribute__((used)) static int format_FLOAT(FILE *stream, FLOAT f) {
@@ -15,9 +16,24 @@ __attribute__((used)) static int format_FLOAT(FILE *stream, FLOAT f) {
 	 *         0x00010000    "1.000000"
 	 *         0x00013333    "1.199996"
 	 */
-	//fprintf(stream, "%x", *(int*)f);
+
+	// Here f is actually &f
+	int p[7], t, i;
+	f = *(FLOAT*)f;
+	if(f < 0) {
+		f = -f;
+		p[0] = -(f >> 16);
+	}
+	else
+		p[0] = f >> 16;
+	t = (f & 0xffff) * 10;
+	for(i = 1; i < 7; i++) {
+		p[i] = t >> 16;
+		t = ((t & 0xffff) << 1) + ((t & 0xffff) << 3);
+	}
 	char buf[80];
-	int len = sprintf(buf, "0x%08x", f);
+	int len = sprintf(buf, "%d.%1d%1d%1d%1d%1d%1d",
+					  p[0], p[1], p[2], p[3], p[4], p[5], p[6]);
 	return __stdio_fwrite(buf, len, stream);
 }
 
@@ -66,16 +82,25 @@ static void modify_vfprintf() {
 #endif
 
 	int32_t p = (int32_t)&_vfprintf_internal + 0x8048861 - 0x804855b;
-	mprotect((void*)((p-100)&0xfffff000), 4096*2, PROT_READ|PROT_WRITE|PROT_EXEC);
+	/*
+	mprotect((void*)((p - 100) & 0xfffff000), 4096 * 2,
+			 PROT_READ | PROT_WRITE | PROT_EXEC);
+	 */
 	int32_t o = (int32_t)&format_FLOAT - (int32_t)&_fpmaxtostr;
 	*(int32_t*)(p + 1) = *(int32_t*)(p + 1) + o;
-	// push (%edx)
-	// opcode 50 + r = 52
 	/*
 	8048854:	83 ec 0c             	sub    $0xc,%esp
     8048857:	db 3c 24             	fstpt  (%esp)
     804885a:	ff b4 24 8c 01 00 00 	pushl  0x18c(%esp)
-
+	--->
+xx	804883f:	db 2a                	fldt   (%edx)
+    8048841:	eb 02                	jmp    8048845 <_vfprintf_internal+0x2ea>
+xx	8048843:	dd 02                	fldl   (%edx)
+    8048845:	53                   	push   %ebx
+    8048846:	53                   	push   %ebx
+    8048847:	68 f4 84 04 08       	push   $0x80484f4
+    804884c:	8d 84 24 a4 00 00 00 	lea    0xa4(%esp),%eax
+    8048853:	50                   	push   %eax
 	8048854:	83 ec 08             	sub    $0x8,%esp
 	8048857:	52                   	push   %edx
 	8048858:	90                      nop
@@ -84,6 +109,8 @@ static void modify_vfprintf() {
 p:	8048861:	e8 d8 0e 00 00       	call   804973e <_fpmaxtostr>
 	*/
 	*(uint32_t*)(p - 7 - 4) = 0x90905208;
+	*(uint16_t*)(p - 30) = 0x9090;
+	*(uint16_t*)(p - 34) = 0x9090;
 }
 
 static void modify_ppfs_setargs() {
@@ -185,6 +212,23 @@ static void modify_ppfs_setargs() {
 	}
 #endif
 
+	/*
+p:	8049199:	8d 5a 08    lea    0x8(%edx),%ebx
+    804919c:	dd 02       fldl   (%edx)
+	80491a1:	dd 19                	fstpl  (%ecx)
+	-->
+	8049199:	8d 5a 08    lea    0x8(%edx),%ebx
+    804919c:	eb 2d       jmp  80491cb <_ppfs_setargs+0xa3>
+	804919e:	89 58 4c    mov    %ebx,0x4c(%eax)
+    80491a1:	dd 19       fstpl  (%ecx)
+	*/
+	int32_t p = (int32_t)&_ppfs_setargs + 0x71;
+	/*
+	mprotect((void*)((p - 100) & 0xfffff000), 4096 * 2,
+			 PROT_READ | PROT_WRITE | PROT_EXEC);
+	*/
+	*(uint16_t*)p = 0x30eb;
+	*(uint8_t*)(p + 2) = 0x90;
 }
 
 void init_FLOAT_vfprintf() {
