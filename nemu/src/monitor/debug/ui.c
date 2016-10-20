@@ -225,8 +225,8 @@ static int cmd_bt(char *args) {
 			printf("#%d  %s (%x, %x, %x, %x)\n", cnt, func_name, func_args[0], func_args[1], func_args[2], func_args[3]);
 		else
 			printf("#%d  0x%x in %s (%x, %x, %x, %x)\n", cnt, ret_addr, func_name, func_args[0], func_args[1], func_args[2], func_args[3]);
-		cur_ebp = swaddr_read(cur_ebp, 4);
 		ret_addr = swaddr_read(cur_ebp + 4, 4);
+		cur_ebp = swaddr_read(cur_ebp, 4);
 		cnt++;
 	} while(cur_ebp != 0);
     return 0;
