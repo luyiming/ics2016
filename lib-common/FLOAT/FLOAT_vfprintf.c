@@ -212,16 +212,12 @@ static void modify_ppfs_setargs() {
 	/*
 p:	8049199:	8d 5a 08    lea    0x8(%edx),%ebx
     804919c:	dd 02       fldl   (%edx)
-	804919e:	89 58 4c    mov    %ebx,0x4c(%eax)
-	80491a1:	dd 19      	fstpl  (%ecx)
 	-->
 	8049199:	eb 30    	jmp  80491cb <_ppfs_setargs+0xa3>
     804919b:	90	       	nop
  	804919c:	dd 02       fldl   (%edx)
-	804919e:	89 58 4c    mov    %ebx,0x4c(%eax)
-    80491a1:	dd 19       fstpl  (%ecx)
 	*/
-	/*
+
 	int32_t p = (int32_t)&_ppfs_setargs + 0x71;
 
 	mprotect((void*)((p - 100) & 0xfffff000), 4096 * 2,
@@ -229,24 +225,7 @@ p:	8049199:	8d 5a 08    lea    0x8(%edx),%ebx
 
 	*(uint16_t*)p = 0x30eb;
 	*(uint8_t*)(p + 2) = 0x90;
-*/
-	/*
-	8049199:	8d 5a 08    lea    0x8(%edx),%ebx
-p:	804919c:	dd 02       fldl   (%edx)
-	804919e:	89 58 4c    mov    %ebx,0x4c(%eax)
-	80491a1:	dd 19      	fstpl  (%ecx)
-	-->
-	8049199:	8d 5a 08    lea    0x8(%edx),%ebx
-	804919c:	eb 2d    	jmp  80491cb <_ppfs_setargs+0xa3>
-	804919e:	89 58 4c    mov    %ebx,0x4c(%eax)
-    80491a1:	dd 19       fstpl  (%ecx)
-	*/
-	int32_t p = (int32_t)&_ppfs_setargs + 0x74;
-/*
-	mprotect((void*)((p - 100) & 0xfffff000), 4096 * 2,
-			 PROT_READ | PROT_WRITE | PROT_EXEC);
-*/
-	*(uint16_t*)p = 0x2deb;
+
 }
 
 void init_FLOAT_vfprintf() {
