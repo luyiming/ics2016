@@ -80,10 +80,10 @@ static void modify_vfprintf() {
 #endif
 
 	int32_t p = (int32_t)&_vfprintf_internal + 0x8048861 - 0x804855b;
-
+/*
 	mprotect((void*)((p - 100) & 0xfffff000), 4096 * 2,
 			 PROT_READ | PROT_WRITE | PROT_EXEC);
-
+*/
 	int32_t o = (int32_t)&format_FLOAT - (int32_t)&_fpmaxtostr;
 	*(int32_t*)(p + 1) = *(int32_t*)(p + 1) + o;
 	/*
@@ -242,10 +242,10 @@ p:	804919c:	dd 02       fldl   (%edx)
     80491a1:	dd 19       fstpl  (%ecx)
 	*/
 	int32_t p = (int32_t)&_ppfs_setargs + 0x74;
-
+/*
 	mprotect((void*)((p - 100) & 0xfffff000), 4096 * 2,
 			 PROT_READ | PROT_WRITE | PROT_EXEC);
-
+*/
 	*(uint16_t*)p = 0x2deb;
 }
 
