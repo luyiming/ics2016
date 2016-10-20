@@ -17,9 +17,7 @@ __attribute__((used)) static int format_FLOAT(FILE *stream, FLOAT f) {
 	 *         0x00013333    "1.199996"
 	 */
 
-	// Here f is actually &f
 	int p[7], t, i;
-	f = *(FLOAT*)f;
 	if(f < 0) {
 		f = -f;
 		p[0] = -(f >> 16);
@@ -102,13 +100,12 @@ xx	8048843:	dd 02                	fldl   (%edx)
     804884c:	8d 84 24 a4 00 00 00 	lea    0xa4(%esp),%eax
     8048853:	50                   	push   %eax
 	8048854:	83 ec 08             	sub    $0x8,%esp
-	8048857:	52                   	push   %edx
-	8048858:	90                      nop
+	8048857:	ff 32                	push   (%edx)
 	8048859:	90                      nop
 	804885a:	ff b4 24 8c 01 00 00 	pushl  0x18c(%esp)
 p:	8048861:	e8 d8 0e 00 00       	call   804973e <_fpmaxtostr>
 	*/
-	*(uint32_t*)(p - 7 - 4) = 0x90905208;
+	*(uint32_t*)(p - 7 - 4) = 0x9032ff08;
 	*(uint16_t*)(p - 30) = 0x9090;
 	*(uint16_t*)(p - 34) = 0x9090;
 }
