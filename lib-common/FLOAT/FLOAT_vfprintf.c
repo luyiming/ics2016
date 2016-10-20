@@ -227,8 +227,8 @@ p:	8049199:	8d 5a 08    lea    0x8(%edx),%ebx
 	mprotect((void*)((p - 100) & 0xfffff000), 4096 * 2,
 			 PROT_READ | PROT_WRITE | PROT_EXEC);
 	*/
-	*(uint16_t*)p = 0x30eb;
-	*(uint8_t*)(p + 2) = 0x90;
+	//*(uint16_t*)p = 0x30eb;
+	//*(uint8_t*)(p + 2) = 0x90;
 }
 
 void init_FLOAT_vfprintf() {
