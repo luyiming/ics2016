@@ -35,4 +35,5 @@ extern FILE* log_fp;
 #define panic(format, ...) \
 	Assert(0, format, ## __VA_ARGS__)
 
+volatile static int dummy;
 #endif
