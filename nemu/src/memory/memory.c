@@ -81,11 +81,13 @@ uint32_t cache_read(hwaddr_t addr, size_t len) {
     for(i = 0; i < NR_SET_BLOCK; i++) {
         if(cache[nr_set][i].valid && cache[nr_set][i].tag == tag) {
             memcpy(data, &cache[nr_set][i].data[block_addr], len);
-            return *data;
+            printf("len:%d data:%x\n", len, *res);
+            return *res;
         }
     }
     i = cache_miss(addr);
     memcpy(data, &cache[nr_set][i].data[block_addr], len);
+    printf("len:%d data:%x\n", len, *res);
     return *res;
 }
 
