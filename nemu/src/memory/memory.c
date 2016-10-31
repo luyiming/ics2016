@@ -69,10 +69,8 @@ int cache_miss(hwaddr_t addr) {
     return i;
 }
 
-uint32_t cache_read(hwaddr_t addr, size_t len) {
+void cache_read_helper(hwaddr_t addr, size_t len, uint8_t* data) {
     int i;
-    uint8_t data[8];
-    uint32_t *res = (uint32_t*)&data[0];
     cache_addr temp;
     temp.addr = addr;
     uint32_t block_addr = temp.block_addr;
@@ -81,15 +79,26 @@ uint32_t cache_read(hwaddr_t addr, size_t len) {
     for(i = 0; i < NR_SET_BLOCK; i++) {
         if(cache[nr_set][i].valid && cache[nr_set][i].tag == tag) {
             memcpy(data, &cache[nr_set][i].data[block_addr], len);
-            printf("cache_get addr:%x len:%d data:%x\n", addr, len, *res);
+            printf("cache_get addr:%x len:%d data:%x\n", addr, len, *data);
             printf("dram addr:%x data:%x \n", addr, dram_read(addr, len) & (~0u >> ((4 - len) << 3)));
-            return *res;
+            return;
         }
     }
     i = cache_miss(addr);
     memcpy(data, &cache[nr_set][i].data[block_addr], len);
-    printf("cache_miss addr:%x len:%d data:%x\n", addr, len, *res);
+    printf("cache_miss addr:%x len:%d data:%x\n", addr, len, *data);
     printf("dram addr:%x data:%x \n", addr, dram_read(addr, len) & (~0u >> ((4 - len) << 3)));
+    return;
+}
+
+uint32_t cache_read(hwaddr_t addr, size_t len) {
+    uint32_t offset = addr & ~((1 << BLOCK_WIDTH) - 1);
+    uint8_t temp[8];
+    uint32_t *res = (uint32_t*)temp;
+    cache_read_helper(addr, len, temp);
+    if(offset + len > BLOCK_SIZE) {
+        cache_read_helper(addr + BLOCK_SIZE - offset, len - BLOCK_SIZE + offset, temp);
+    } 
     return *res;
 }
 
@@ -111,6 +120,7 @@ void cache_write(hwaddr_t addr, size_t len, uint32_t data) {
     memcpy(&cache[nr_set][i].data[block_addr], &data, len);
     dram_write(addr, len, data);
 }
+
 /* Memory accessing interfaces */
 
 uint32_t hwaddr_read(hwaddr_t addr, size_t len) {
