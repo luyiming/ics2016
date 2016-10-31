@@ -59,6 +59,7 @@ int cache_miss(hwaddr_t addr) {
     addr = addr & ~((1 << BLOCK_WIDTH) - 1);
     for(j = 0; j < BLOCK_SIZE; j += 4) {
         data = dram_read(addr + j, 4);
+        printf("cache_miss: %x ", data);
         memcpy(cache[nr_set][i].data + j, &data, 4);
     }
     printf("cache_miss addr after: %x\n", addr);
