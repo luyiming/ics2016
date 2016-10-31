@@ -60,7 +60,7 @@ int cache_miss(hwaddr_t addr) {
         data = dram_read(addr + j, 4);
         memcpy(cache[nr_set][i].data + j, &data, 4);
     }
-    Assert(j == BLOCK_WIDTH, "j != BLOCK_WIDTH");
+    Assert(j == BLOCK_SIZE, "j != BLOCK_SIZE");
     cache[nr_set][i].valid = true;
     cache[nr_set][i].tag = temp.tag;
     return i;
