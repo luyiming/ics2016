@@ -93,6 +93,7 @@ uint32_t cache_read(hwaddr_t addr, size_t len) {
         printf("%x ", cache[nr_set][i].data[block_addr + k]);
     }
     printf("\ndram:\n");
+    printf("addr: %x \n", addr);
     for(k = 0; k < BLOCK_SIZE; k++) {
         printf("%x ", dram_read(addr + k, 1) & 0xff);
     }
