@@ -93,7 +93,7 @@ void cache_read_helper(hwaddr_t addr, size_t len, uint8_t* data) {
 
 uint32_t cache_read(hwaddr_t addr, size_t len) {
     uint32_t offset = addr & ~((1 << BLOCK_WIDTH) - 1);
-    uint8_t temp[8];
+    uint8_t temp[32];
     uint32_t *res = (uint32_t*)temp;
     cache_read_helper(addr, len, temp);
     if(offset + len > BLOCK_SIZE) {
