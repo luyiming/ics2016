@@ -48,6 +48,7 @@ int cache_miss(hwaddr_t addr) {
     cache_addr temp;
     temp.addr = addr;
     uint32_t nr_set = temp.nr_set;
+    printf("cache_miss addr before: %x\n", addr);
     for(i = 0; i < NR_SET_BLOCK; i++) {
         if(cache[nr_set][i].valid == false)
             break;
@@ -60,10 +61,12 @@ int cache_miss(hwaddr_t addr) {
         data = dram_read(addr + j, 4);
         memcpy(cache[nr_set][i].data + j, &data, 4);
     }
-    for(k = 0; k < BLOCK_SIZE; k++) {
-        Assert(*(uint32_t*)(cache[nr_set][i].data + k) == dram_read(addr + k, 4),  "cache_miss fail");
-    }
+    printf("cache_miss addr after: %x\n", addr);
+    printf("cache_miss block_addr: %x\n", temp.block_addr);
     Assert(j == BLOCK_SIZE, "j != BLOCK_SIZE");
+    for(k = 0; k < BLOCK_SIZE; k++) {
+        Assert(cache[nr_set][i].data[k] == (dram_read(addr + k, 1) & 0xff), "cache_miss fail");
+    }
     cache[nr_set][i].valid = true;
     cache[nr_set][i].tag = temp.tag;
     return i;
