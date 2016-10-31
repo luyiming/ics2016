@@ -95,7 +95,7 @@ uint32_t cache_read(hwaddr_t addr, size_t len) {
     printf("\ndram:\n");
     printf("addr: %x \n", addr);
     for(k = 0; k < BLOCK_SIZE; k++) {
-        printf("%x ", dram_read(addr + k, 1) & 0xff);
+        printf("%x ", dram_read(addr + k, 1));
     }
     memcpy(&data, &cache[nr_set][i].data[block_addr], len);
 	Assert((dram_read(addr, len) & (~0u >> ((4 - len) << 3))) == data, "cache_read fail");
