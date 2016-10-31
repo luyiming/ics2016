@@ -59,7 +59,6 @@ int cache_miss(hwaddr_t addr) {
     addr = addr & ~((1 << BLOCK_WIDTH) - 1);
     for(j = 0; j < BLOCK_SIZE; j += 4) {
         data = dram_read(addr + j, 4);
-        printf("cache_miss: %x ", data);
         memcpy(cache[nr_set][i].data + j, &data, 4);
     }
     printf("cache_miss addr after: %x\n", addr);
@@ -96,7 +95,7 @@ uint32_t cache_read(hwaddr_t addr, size_t len) {
     printf("\ndram:\n");
     printf("addr: %x \n", addr);
     for(k = 0; k < BLOCK_SIZE; k++) {
-        printf("%x ", dram_read(addr + k, 1));
+        printf("%x ", dram_read(addr + k, 4) & 0xff);
     }
     memcpy(&data, &cache[nr_set][i].data[block_addr], len);
 	Assert((dram_read(addr, len) & (~0u >> ((4 - len) << 3))) == data, "cache_read fail");
