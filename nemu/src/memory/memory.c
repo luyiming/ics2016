@@ -1,4 +1,5 @@
 #include "common.h"
+#include "stdlib.h"
 
 uint32_t dram_read(hwaddr_t, size_t);
 void dram_write(hwaddr_t, size_t, uint32_t);
@@ -11,7 +12,7 @@ void dram_write(hwaddr_t, size_t, uint32_t);
 
 #define BLOCK_SIZE (1 << BLOCK_WIDTH)
 #define NR_SET (1 << SET_WIDTH)
-#define NR_BLOCK (1 << SET_BLOCK_WIDTH)
+#define NR_SET_BLOCK (1 << SET_BLOCK_WIDTH)
 
 typedef union {
 	struct {
@@ -28,18 +29,79 @@ typedef struct {
     uint32_t tag;
 } Block;
 
-typedef struct {
-    Block blocks[NR_SET][NR_BLOCK];
-} Cache;
+Block cache[NR_SET][NR_SET_BLOCK];
 
+
+int cache_miss(hwaddr_t addr) {
+    int i, j;
+    uint32_t data;
+    cache_addr temp;
+    temp.addr = addr;
+    uint32_t nr_set = temp.nr_set;
+    for(i = 0; i < NR_SET_BLOCK; i++) {
+        if(cache[nr_set][i].valid == 0)
+            return i;
+    }
+    if(i == NR_SET_BLOCK) {
+        i = rand() % NR_SET_BLOCK;
+    }
+    addr = addr & ~((1 << BLOCK_WIDTH) - 1);
+    for(j = 0; j < BLOCK_SIZE; j += 4) {
+        data = dram_read(addr + j, 4);
+        memcpy(cache[nr_set][i].data + j, &data, 4);
+    }
+    return i;
+}
+
+uint32_t cache_read(hwaddr_t addr, size_t len) {
+    int i;
+    uint32_t data;
+    cache_addr temp;
+    temp.addr = addr;
+    uint32_t block_addr = temp.block_addr;
+    uint32_t nr_set = temp.nr_set;
+    uint32_t tag = temp.tag;
+    for(i = 0; i < NR_SET_BLOCK; i++) {
+        if(cache[nr_set][i].valid == 1 && cache[nr_set][i].tag == tag) {
+            memcpy(&data, &cache[nr_set][i].data[block_addr], len);
+            return data;
+        }
+    }
+    i = cache_miss(addr);
+    cache[nr_set][i].tag = tag;
+    memcpy(&data, &cache[nr_set][i].data[block_addr], len);
+    return data;
+}
+
+void cache_write(hwaddr_t addr, size_t len, uint32_t data) {
+    int i;
+    cache_addr temp;
+    temp.addr = addr;
+    uint32_t block_addr = temp.block_addr;
+    uint32_t nr_set = temp.nr_set;
+    uint32_t tag = temp.tag;
+    for(i = 0; i < NR_SET_BLOCK; i++) {
+        if(cache[nr_set][i].valid == 1 && cache[nr_set][i].tag == tag) {
+            memcpy(&cache[nr_set][i].data[block_addr], &data, len);
+            dram_write(addr, len, data);
+            return;
+        }
+    }
+    i = cache_miss(addr);
+    cache[nr_set][i].tag = tag;
+    memcpy(&cache[nr_set][i].data[block_addr], &data, len);
+    dram_write(addr, len, data);
+}
 /* Memory accessing interfaces */
 
 uint32_t hwaddr_read(hwaddr_t addr, size_t len) {
-	return dram_read(addr, len) & (~0u >> ((4 - len) << 3));
+	return cache_read(addr, len);
+	//return dram_read(addr, len) & (~0u >> ((4 - len) << 3));
 }
 
 void hwaddr_write(hwaddr_t addr, size_t len, uint32_t data) {
-	dram_write(addr, len, data);
+	cache_write(addr, len, data);
+	//dram_write(addr, len, data);
 }
 
 uint32_t lnaddr_read(lnaddr_t addr, size_t len) {
