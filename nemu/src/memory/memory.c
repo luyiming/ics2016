@@ -71,7 +71,8 @@ int cache_miss(hwaddr_t addr) {
 
 uint32_t cache_read(hwaddr_t addr, size_t len) {
     int i;
-    uint32_t data[8];
+    uint8_t data[8];
+    uint32_t *res = (uint32_t*)&data[0];
     cache_addr temp;
     temp.addr = addr;
     uint32_t block_addr = temp.block_addr;
@@ -85,8 +86,7 @@ uint32_t cache_read(hwaddr_t addr, size_t len) {
     }
     i = cache_miss(addr);
     memcpy(data, &cache[nr_set][i].data[block_addr], len);
-	Assert((dram_read(addr, len) & (~0u >> ((4 - len) << 3))) == *data, "cache_read fail");
-    return *data;
+    return *res;
 }
 
 void cache_write(hwaddr_t addr, size_t len, uint32_t data) {
