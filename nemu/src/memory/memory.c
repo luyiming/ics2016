@@ -48,7 +48,6 @@ int cache_miss(hwaddr_t addr) {
     cache_addr temp;
     temp.addr = addr;
     uint32_t nr_set = temp.nr_set;
-    printf("cache_miss addr before: %x\n", addr);
     for(i = 0; i < NR_SET_BLOCK; i++) {
         if(cache[nr_set][i].valid == false)
             break;
@@ -61,8 +60,6 @@ int cache_miss(hwaddr_t addr) {
         data = dram_read(addr + j, 4);
         memcpy(cache[nr_set][i].data + j, &data, 4);
     }
-    printf("cache_miss addr after: %x\n", addr);
-    printf("cache_miss block_addr: %x\n", temp.block_addr);
     Assert(j == BLOCK_SIZE, "j != BLOCK_SIZE");
     for(k = 0; k < BLOCK_SIZE; k++) {
         Assert(cache[nr_set][i].data[k] == (dram_read(addr + k, 1) & 0xff), "cache_miss fail");
@@ -74,7 +71,6 @@ int cache_miss(hwaddr_t addr) {
 
 uint32_t cache_read(hwaddr_t addr, size_t len) {
     int i;
-    int k;
     uint32_t data[8];
     cache_addr temp;
     temp.addr = addr;
@@ -88,24 +84,13 @@ uint32_t cache_read(hwaddr_t addr, size_t len) {
         }
     }
     i = cache_miss(addr);
-    printf("\ncache:\n");
-    for(k = 0; k < BLOCK_SIZE - block_addr; k++) {
-        printf("%x ", cache[nr_set][i].data[block_addr + k]);
-    }
-    printf("\ndram:\n");
-    for(k = 0; k < BLOCK_SIZE; k++) {
-        printf("addr: %x ", addr + k);
-        printf("%x \n", dram_read(addr + k, 1) & 0xff);
-    }
     memcpy(data, &cache[nr_set][i].data[block_addr], len);
 	Assert((dram_read(addr, len) & (~0u >> ((4 - len) << 3))) == *data, "cache_read fail");
-    printf("cache_read return data: %x\n", *data);
     return *data;
 }
 
 void cache_write(hwaddr_t addr, size_t len, uint32_t data) {
     int i;
-    uint32_t test_data;
     cache_addr temp;
     temp.addr = addr;
     uint32_t block_addr = temp.block_addr;
@@ -121,18 +106,15 @@ void cache_write(hwaddr_t addr, size_t len, uint32_t data) {
     i = cache_miss(addr);
     memcpy(&cache[nr_set][i].data[block_addr], &data, len);
     dram_write(addr, len, data);
-    memcpy(&test_data, &cache[nr_set][i].data[block_addr], len);
-	Assert((dram_read(addr, len) & (~0u >> ((4 - len) << 3))) == test_data, "cache_read fail");
 }
 /* Memory accessing interfaces */
 
 uint32_t hwaddr_read(hwaddr_t addr, size_t len) {
+    uint32_t data1 = dram_read(addr, len) & (~0u >> ((4 - len) << 3));
+    uint32_t data2 = cache_read(addr, len);
+	//return dram_read(addr, len) & (~0u >> ((4 - len) << 3));
+    Assert(data1 == data2, "hwaddr_read fail, addr:%x, dram:%x cache:%x", addr, data1, data2);
 	return cache_read(addr, len);
-    /*
-    uint32_t res = dram_read(addr, len) & (~0u >> ((4 - len) << 3));
-    printf("hwaddr_read: %x\n", res);
-	return dram_read(addr, len) & (~0u >> ((4 - len) << 3));
-    */
 }
 
 void hwaddr_write(hwaddr_t addr, size_t len, uint32_t data) {
