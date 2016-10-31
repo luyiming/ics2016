@@ -39,6 +39,7 @@ void init_cache() {
 			cache[i][j].valid = false;
 		}
 	}
+    printf("init cache()\n");
 }
 
 int cache_miss(hwaddr_t addr) {
@@ -59,7 +60,9 @@ int cache_miss(hwaddr_t addr) {
         data = dram_read(addr + j, 4);
         memcpy(cache[nr_set][i].data + j, &data, 4);
     }
+    Assert(j == BLOCK_WIDTH, "j != BLOCK_WIDTH");
     cache[nr_set][i].valid = true;
+    cache[nr_set][i].tag = temp.tag;
     return i;
 }
 
@@ -78,7 +81,6 @@ uint32_t cache_read(hwaddr_t addr, size_t len) {
         }
     }
     i = cache_miss(addr);
-    cache[nr_set][i].tag = tag;
     memcpy(&data, &cache[nr_set][i].data[block_addr], len);
     return data;
 }
@@ -98,7 +100,6 @@ void cache_write(hwaddr_t addr, size_t len, uint32_t data) {
         }
     }
     i = cache_miss(addr);
-    cache[nr_set][i].tag = tag;
     memcpy(&cache[nr_set][i].data[block_addr], &data, len);
     dram_write(addr, len, data);
 }
