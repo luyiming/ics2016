@@ -115,10 +115,10 @@ void cache_write(hwaddr_t addr, size_t len, uint32_t data) {
 
 uint32_t hwaddr_read(hwaddr_t addr, size_t len) {
     uint32_t data1 = dram_read(addr, len) & (~0u >> ((4 - len) << 3));
-    uint32_t data2 = cache_read(addr, len);
+    uint32_t data2 = cache_read(addr, len) & (~0u >> ((4 - len) << 3));
 	//return dram_read(addr, len) & (~0u >> ((4 - len) << 3));
     Assert(data1 == data2, "hwaddr_read fail, addr:%x, dram:%x cache:%x", addr, data1, data2);
-	return cache_read(addr, len);
+	return cache_read(addr, len) & (~0u >> ((4 - len) << 3));
 }
 
 void hwaddr_write(hwaddr_t addr, size_t len, uint32_t data) {
