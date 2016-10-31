@@ -87,6 +87,7 @@ uint32_t cache_read(hwaddr_t addr, size_t len) {
         }
     }
     i = cache_miss(addr);
+    printf("%x\n", cache[nr_set][i].data[block_addr]);
     memcpy(&data, &cache[nr_set][i].data[block_addr], len);
 	Assert((dram_read(addr, len) & (~0u >> ((4 - len) << 3))) == data, "cache_read fail");
     return data;
