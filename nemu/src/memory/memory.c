@@ -32,6 +32,15 @@ typedef struct {
 Block cache[NR_SET][NR_SET_BLOCK];
 
 
+void init_cache() {
+	int i, j;
+	for(i = 0; i < NR_SET; i ++) {
+		for(j = 0; j < NR_SET_BLOCK; j ++) {
+			cache[i][j].valid = false;
+		}
+	}
+}
+
 int cache_miss(hwaddr_t addr) {
     int i, j;
     uint32_t data;
@@ -39,8 +48,8 @@ int cache_miss(hwaddr_t addr) {
     temp.addr = addr;
     uint32_t nr_set = temp.nr_set;
     for(i = 0; i < NR_SET_BLOCK; i++) {
-        if(cache[nr_set][i].valid == 0)
-            return i;
+        if(cache[nr_set][i].valid == false)
+            break;
     }
     if(i == NR_SET_BLOCK) {
         i = rand() % NR_SET_BLOCK;
@@ -50,6 +59,7 @@ int cache_miss(hwaddr_t addr) {
         data = dram_read(addr + j, 4);
         memcpy(cache[nr_set][i].data + j, &data, 4);
     }
+    cache[nr_set][i].valid = true;
     return i;
 }
 
@@ -62,7 +72,7 @@ uint32_t cache_read(hwaddr_t addr, size_t len) {
     uint32_t nr_set = temp.nr_set;
     uint32_t tag = temp.tag;
     for(i = 0; i < NR_SET_BLOCK; i++) {
-        if(cache[nr_set][i].valid == 1 && cache[nr_set][i].tag == tag) {
+        if(cache[nr_set][i].valid && cache[nr_set][i].tag == tag) {
             memcpy(&data, &cache[nr_set][i].data[block_addr], len);
             return data;
         }
@@ -81,7 +91,7 @@ void cache_write(hwaddr_t addr, size_t len, uint32_t data) {
     uint32_t nr_set = temp.nr_set;
     uint32_t tag = temp.tag;
     for(i = 0; i < NR_SET_BLOCK; i++) {
-        if(cache[nr_set][i].valid == 1 && cache[nr_set][i].tag == tag) {
+        if(cache[nr_set][i].valid && cache[nr_set][i].tag == tag) {
             memcpy(&cache[nr_set][i].data[block_addr], &data, len);
             dram_write(addr, len, data);
             return;
