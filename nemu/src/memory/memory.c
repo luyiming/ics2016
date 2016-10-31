@@ -75,7 +75,7 @@ int cache_miss(hwaddr_t addr) {
 uint32_t cache_read(hwaddr_t addr, size_t len) {
     int i;
     int k;
-    uint32_t data;
+    uint32_t data[8];
     cache_addr temp;
     temp.addr = addr;
     uint32_t block_addr = temp.block_addr;
@@ -83,8 +83,8 @@ uint32_t cache_read(hwaddr_t addr, size_t len) {
     uint32_t tag = temp.tag;
     for(i = 0; i < NR_SET_BLOCK; i++) {
         if(cache[nr_set][i].valid && cache[nr_set][i].tag == tag) {
-            memcpy(&data, &cache[nr_set][i].data[block_addr], len);
-            return data;
+            memcpy(data, &cache[nr_set][i].data[block_addr], len);
+            return *data;
         }
     }
     i = cache_miss(addr);
@@ -97,14 +97,13 @@ uint32_t cache_read(hwaddr_t addr, size_t len) {
         printf("addr: %x ", addr + k);
         printf("%x \n", dram_read(addr + k, 1) & 0xff);
     }
-    memcpy(&data, &cache[nr_set][i].data[block_addr], len);
-	Assert((dram_read(addr, len) & (~0u >> ((4 - len) << 3))) == data, "cache_read fail");
-    printf("cache_read return data: %x\n", data);
-    return data;
+    memcpy(data, &cache[nr_set][i].data[block_addr], len);
+	Assert((dram_read(addr, len) & (~0u >> ((4 - len) << 3))) == *data, "cache_read fail");
+    printf("cache_read return data: %x\n", *data);
+    return *data;
 }
 
 void cache_write(hwaddr_t addr, size_t len, uint32_t data) {
-    printf("cache_write0\n");
     int i;
     uint32_t test_data;
     cache_addr temp;
@@ -119,23 +118,21 @@ void cache_write(hwaddr_t addr, size_t len, uint32_t data) {
             return;
         }
     }
-    printf("cache_write\n");
     i = cache_miss(addr);
-    printf("cache_write2\n");
     memcpy(&cache[nr_set][i].data[block_addr], &data, len);
-    printf("cache_write3\n");
     dram_write(addr, len, data);
-    printf("cache_write4\n");
     memcpy(&test_data, &cache[nr_set][i].data[block_addr], len);
 	Assert((dram_read(addr, len) & (~0u >> ((4 - len) << 3))) == test_data, "cache_read fail");
 }
 /* Memory accessing interfaces */
 
 uint32_t hwaddr_read(hwaddr_t addr, size_t len) {
-	//return cache_read(addr, len);
+	return cache_read(addr, len);
+    /*
     uint32_t res = dram_read(addr, len) & (~0u >> ((4 - len) << 3));
     printf("hwaddr_read: %x\n", res);
 	return dram_read(addr, len) & (~0u >> ((4 - len) << 3));
+    */
 }
 
 void hwaddr_write(hwaddr_t addr, size_t len, uint32_t data) {
