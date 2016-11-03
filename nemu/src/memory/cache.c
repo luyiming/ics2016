@@ -1,14 +1,14 @@
 #include "common.h"
 #include "stdlib.h"
 
-uint32_t dram_read(hwaddr_t, size_t);
-void dram_write(hwaddr_t, size_t, uint32_t);
+uint32_t L2_cache_read(hwaddr_t addr, size_t len);
+void L2_cache_write(hwaddr_t addr, size_t len, uint32_t data);
 
-#define CACHE_WIDTH 11//16
-#define CACHE_SIZE 2048//(64 << 10)
+#define CACHE_WIDTH 16
+#define CACHE_SIZE (64 << 10)
 #define COL_WIDTH 6
 #define ROW_WIDTH 3
-#define SET_WIDTH 2//7  // == (CACHE_WIDTH - COL_WIDTH - ROW_WIDTH)
+#define SET_WIDTH 7  // == (CACHE_WIDTH - COL_WIDTH - ROW_WIDTH)
 #define TAG_WIDTH (27 - COL_WIDTH - SET_WIDTH)
 
 #define NR_COL (1 << COL_WIDTH)
@@ -61,7 +61,7 @@ int cache_miss(hwaddr_t addr) {
     }
     addr = addr & ~COL_MASK;  // set col filed to zero
     for(j = 0; j < NR_COL; j += 4) {
-        unalign_rw(cache[set][i].data + j, 4) = dram_read(addr + j, 4);
+        unalign_rw(cache[set][i].data + j, 4) = L2_cache_read(addr + j, 4);
     }
     Assert(j == NR_COL, "j != NR_COL");
     cache[set][i].valid = true;
@@ -118,13 +118,13 @@ void cache_write(hwaddr_t addr, size_t len, uint32_t data) {
         if(cache[set][i].valid && cache[set][i].tag == tag) {
             memcpy(&cache[set][i].data[col], &data, len);
             cpu_time += 2;
-            dram_write(addr, len, data);
+            L2_cache_write(addr, len, data);
             return;
         }
     }
     i = cache_miss(addr);
     memcpy(&cache[set][i].data[col], &data, len);
-    dram_write(addr, len, data);
+    L2_cache_write(addr, len, data);
 }
 
 void debug_cache(hwaddr_t addr) {
