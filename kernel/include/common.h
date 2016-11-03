@@ -22,6 +22,8 @@ typedef uint8_t bool;
 
 #define NULL ((void *)0)
 
+#define IA32_SEG
+
 #include "debug.h"
 
 #endif
