@@ -235,9 +235,40 @@ static int cmd_bt(char *args) {
     return 0;
 }
 
+int nemu_atoi(char *str) {
+	int value = 0, sign = 1, radix = 10;
+	if(str == NULL) return 0;
+	if(*str == '-') {
+		sign = -1;
+		str++;
+	}
+	if(*str == '0' && *(str + 1) == 'x') {
+		radix = 16;
+		str += 2;
+	}
+	else if(*str == '0') {
+		radix = 8;
+		str++;
+	}
+	else
+		radix = 10;
+	while(*str) {
+		if(radix == 16) {
+			if(*str >= '0' && *str <= '9')
+				value = value * radix + *str - '0';
+			else
+				value = value * radix + (*str | 0x20) - 'a' + 10;
+		}
+		else
+			value = value * radix + *str - '0';
+		str++;
+	}
+	return sign * value;
+}
+
 static int cmd_addr(char *args) {
     char *arg = strtok(NULL, " ");
-    int n = atoi(arg);
+    int n = nemu_atoi(arg);
     if(n == 0) {
         printf("syntax error. Usage addr n\n");
     }
