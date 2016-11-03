@@ -4,11 +4,11 @@
 uint32_t dram_read(hwaddr_t, size_t);
 void dram_write(hwaddr_t, size_t, uint32_t);
 
-#define CACHE_WIDTH 16
-#define CACHE_SIZE (64 << 10)
+#define CACHE_WIDTH 11//16
+#define CACHE_SIZE 2048//(64 << 10)
 #define COL_WIDTH 6
 #define ROW_WIDTH 3
-#define SET_WIDTH 7  // == (CACHE_WIDTH - COL_WIDTH - ROW_WIDTH)
+#define SET_WIDTH 2//7  // == (CACHE_WIDTH - COL_WIDTH - ROW_WIDTH)
 #define TAG_WIDTH (27 - COL_WIDTH - SET_WIDTH)
 
 #define NR_COL (1 << COL_WIDTH)
