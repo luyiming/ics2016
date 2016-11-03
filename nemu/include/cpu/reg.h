@@ -42,7 +42,7 @@ typedef struct {
             unsigned  IF: 1; // 0   X   Interrupt Enable Flag
             unsigned  DF: 1; // 0   C   Direction Flag
             unsigned  OF: 1; // 0 * S   Overflow Flag
-           unsigned IOPL: 2; // 0   X   I/O Privilege Level
+            unsigned IOPL:2; // 0   X   I/O Privilege Level
             unsigned  NT: 1; // 0   X   Nested Task
             unsigned    : 1; // 0
             unsigned  RF: 1; // 0   X   Resume Flag
@@ -54,6 +54,47 @@ typedef struct {
             unsigned    :10; // 0
         };
         uint32_t eflags;
+    };
+
+    uint16_t CS, SS, DS, ES; // initialized to zero
+
+    struct {
+        unsigned Limit: 16;
+        unsigned Base : 32;
+    } GDTR;
+
+    struct {
+        unsigned Limit: 16;
+        unsigned Base : 32;
+    } IDTR;
+
+    union {
+        struct {
+            unsigned PE: 1; // Protection Enable.
+            unsigned MP: 1; // Math Present
+            unsigned EM: 1; // Emulation
+            unsigned TS: 1; // Task Switched
+            unsigned ET: 1; // Extension Type
+            unsigned   :26;
+            unsigned PG: 1; // Paging
+        };
+        uint32_t CR0; //initialized to zero
+    };
+
+    /* CR2 is used for handling page faults when PG is set. The processor stores
+     * in CR2 the linear address that triggers the fault.
+     */
+    uint32_t CR2;
+
+    /* CR3 is used when PG is set. CR3 enables the processor to locate the page
+     * table directory for the current task.
+     */
+    union {
+        struct {
+            unsigned : 10  ; //TODO
+            unsigned PDBR: 10;
+        };
+        uint32_t CR3;
     };
 
 	swaddr_t eip;

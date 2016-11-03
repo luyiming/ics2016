@@ -3,6 +3,7 @@
 
 uint32_t L2_cache_read(hwaddr_t addr, size_t len);
 void L2_cache_write(hwaddr_t addr, size_t len, uint32_t data);
+void debug_L2_cache(hwaddr_t addr);
 
 #define CACHE_WIDTH 16
 #define CACHE_SIZE (64 << 10)
@@ -137,9 +138,9 @@ void debug_cache(hwaddr_t addr) {
     printf("addr = 0x%08x, tag = 0x%x, set = 0x%x, col = 0x%x\n", addr, tag, set, col);
     for(i = 0; i < NR_ROW; i++) {
         if(cache[set][i].valid && cache[set][i].tag == tag) {
-            printf("Hit cache[0x%x][%d]\n", set, i);
-            printf("address 0x%08x data: 0x%02x\n", addr, cache[set][i].data[col]);
-            printf("cache block begin at %08x:\n", addr & ~COL_MASK);
+            printf("Hit L1_cache[0x%x][%d]\n", set, i);
+            printf("address 0x%08x L1_cache data: 0x%02x\n", addr, cache[set][i].data[col]);
+            printf("L1_cache block begin at %08x:\n", addr & ~COL_MASK);
             for(j = 0; j < NR_COL; ++j){
                 printf("%02x ", cache[set][i].data[j]);
                 if(j % 16 == 15) printf("\n");
@@ -148,10 +149,11 @@ void debug_cache(hwaddr_t addr) {
             return;
         }
     }
-    printf("Cache miss!\n");
+    printf("L1_cache miss!\n");
     for(i = 0; i < NR_ROW; ++i){
-        printf("cache[0x%x][%d]: valid:%d, tag:0x%x\n", set, i, cache[set][i].valid, cache[set][i].tag);
+        printf("L1_cache[0x%x][%d]: valid:%d, tag:0x%x\n", set, i, cache[set][i].valid, cache[set][i].tag);
     }
+    debug_L2_cache(addr);
 }
 
 #undef CACHE_WIDTH
