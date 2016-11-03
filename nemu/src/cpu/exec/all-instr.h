@@ -48,6 +48,3 @@
 #include "transfer/jmp.h"
 
 #include "special/special.h"
-
-#include "system/lgdt.h"
-#include "system/lidt.h"
