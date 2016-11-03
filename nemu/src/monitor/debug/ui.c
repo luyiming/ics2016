@@ -10,6 +10,7 @@
 void cpu_exec(uint32_t);
 extern char* get_symbol_name(uint32_t addr);
 void debug_cache(hwaddr_t addr);
+extern uint64_t cpu_time;
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 char* rl_gets() {
@@ -270,7 +271,8 @@ static int cmd_addr(char *args) {
     char *arg = strtok(NULL, " ");
     int n = nemu_atoi(arg);
     if(n == 0) {
-        printf("syntax error. Usage addr n\n");
+		printf("running cpu_time: %lld\n", cpu_time);
+        //printf("syntax error. Usage addr n\n");
     }
     else {
         debug_cache(n);

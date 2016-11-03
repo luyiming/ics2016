@@ -6,7 +6,6 @@ void dram_write(hwaddr_t, size_t, uint32_t);
 
 #define CACHE_WIDTH 16
 #define CACHE_SIZE (64 << 10)
-
 #define COL_WIDTH 6
 #define ROW_WIDTH 3
 #define SET_WIDTH 7  // == (CACHE_WIDTH - COL_WIDTH - ROW_WIDTH)
@@ -18,6 +17,8 @@ void dram_write(hwaddr_t, size_t, uint32_t);
 
 #define HW_MEM_SIZE (1 << (COL_WIDTH + SET_WIDTH + TAG_WIDTH))
 #define COL_MASK ((1 << COL_WIDTH) - 1)
+
+uint64_t cpu_time = 0;
 
 typedef union {
 	struct {
@@ -46,6 +47,7 @@ void init_cache() {
 }
 
 int cache_miss(hwaddr_t addr) {
+    cpu_time += 200;
     int i, j;
     cache_addr caddr;
     caddr.addr = addr;
@@ -88,6 +90,7 @@ uint32_t cache_read(hwaddr_t addr, size_t len) {
     for(i = 0; i < NR_ROW; i++) {
         if(cache[set][i].valid && cache[set][i].tag == tag) {
             memcpy(temp, &cache[set][i].data[col], len);
+            cpu_time += 2;
             return unalign_rw(temp + offset, 4);
         }
     }
@@ -114,6 +117,7 @@ void cache_write(hwaddr_t addr, size_t len, uint32_t data) {
     for(i = 0; i < NR_ROW; i++) {
         if(cache[set][i].valid && cache[set][i].tag == tag) {
             memcpy(&cache[set][i].data[col], &data, len);
+            cpu_time += 2;
             dram_write(addr, len, data);
             return;
         }
@@ -159,3 +163,5 @@ void debug_cache(hwaddr_t addr) {
 #undef NR_COL
 #undef NR_ROW
 #undef NR_SET
+#undef HW_MEM_SIZE
+#undef COL_MASK
