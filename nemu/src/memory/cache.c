@@ -123,6 +123,33 @@ void cache_write(hwaddr_t addr, size_t len, uint32_t data) {
     dram_write(addr, len, data);
 }
 
+void debug_cache(hwaddr_t addr) {
+    cache_addr caddr;
+    caddr.addr = addr;
+    uint32_t col = caddr.col;
+    uint32_t set = caddr.set;
+    uint32_t tag = caddr.tag;
+    int i, j;
+    printf("addr = 0x%08x, tag = 0x%x, set = 0x%x, col = 0x%x\n", addr, tag, set, col);
+    for(i = 0; i < NR_ROW; i++) {
+        if(cache[set][i].valid && cache[set][i].tag == tag) {
+            printf("Hit cache[0x%x][%d]\n", set, i);
+            printf("address 0x%08x data: 0x%02x\n", addr, cache[set][i].data[col]);
+            printf("cache block begin at %08x:\n", addr & ~COL_MASK);
+            for(j = 0; j < NR_COL; ++j){
+                printf("%02x ", cache[set][i].data[j]);
+                if(j % 16 == 15) printf("\n");
+            }
+            printf("\n");
+            return;
+        }
+    }
+    printf("Cache miss!\n");
+    for(i = 0; i < NR_ROW; ++i){
+        printf("cache[0x%x][%d]: valid:%d, tag:0x%x\n", set, i, cache[set][i].valid, cache[set][i].tag);
+    }
+}
+
 #undef CACHE_WIDTH
 #undef CACHE_SIZE
 #undef COL_WIDTH

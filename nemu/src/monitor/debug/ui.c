@@ -9,6 +9,7 @@
 
 void cpu_exec(uint32_t);
 extern char* get_symbol_name(uint32_t addr);
+void debug_cache(hwaddr_t addr);
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 char* rl_gets() {
@@ -58,6 +59,7 @@ static int cmd_p(char *args);
 static int cmd_w(char *args);
 static int cmd_d(char *args);
 static int cmd_bt(char *args);
+static int cmd_addr(char *args);
 
 static struct {
 	char *name;
@@ -74,6 +76,7 @@ static struct {
 	{ "w", "Set watchpoint", cmd_w },
 	{ "d", "Delete watchpoint", cmd_d },
 	{ "bt", "Print stack chain", cmd_bt },
+	{ "addr", "Print cache addr info.", cmd_addr },
 
 	/* TODO: Add more commands */
 
@@ -229,6 +232,18 @@ static int cmd_bt(char *args) {
 		cur_ebp = swaddr_read(cur_ebp, 4);
 		cnt++;
 	} while(cur_ebp != 0);
+    return 0;
+}
+
+static int cmd_addr(char *args) {
+    char *arg = strtok(NULL, " ");
+    int n = atoi(arg);
+    if(n == 0) {
+        printf("syntax error. Usage addr n\n");
+    }
+    else {
+        debug_cache(n);
+    }
     return 0;
 }
 
