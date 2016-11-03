@@ -78,6 +78,7 @@ uint32_t cache_read(hwaddr_t addr, size_t len) {
     uint32_t offset = 0;
     uint8_t temp[8];
     int i;
+    // addr cross boundary
     if(col + len > NR_COL) {
         unalign_rw(temp + NR_COL - col, 4) = cache_read(addr + NR_COL - col, len);
         Assert(addr + NR_COL - col == ((addr + NR_COL - col) & ~COL_MASK),
@@ -105,6 +106,11 @@ void cache_write(hwaddr_t addr, size_t len, uint32_t data) {
     uint32_t col = caddr.col;
     uint32_t set = caddr.set;
     uint32_t tag = caddr.tag;
+    // addr cross boundary
+    if(col + len > NR_COL) {
+        cache_write(addr + NR_COL - col, len - (NR_COL - col), data >> (8*(NR_COL - col)));
+        len = len - (NR_COL - col);
+    }
     for(i = 0; i < NR_ROW; i++) {
         if(cache[set][i].valid && cache[set][i].tag == tag) {
             memcpy(&cache[set][i].data[col], &data, len);
