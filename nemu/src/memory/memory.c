@@ -7,7 +7,6 @@ uint32_t cache_read(hwaddr_t addr, size_t len);
 void cache_write(hwaddr_t addr, size_t len, uint32_t data);
 
 /* Memory accessing interfaces */
-uint64_t cpu_time_2 = 0;
 
 uint32_t hwaddr_read(hwaddr_t addr, size_t len) {
 	//uint32_t data1 = dram_read(addr, len) & (~0u >> ((4 - len) << 3));
@@ -16,12 +15,10 @@ uint32_t hwaddr_read(hwaddr_t addr, size_t len) {
 	//	printf("cache_read fail, addr:0x%x, dram:0x%x cache:0x%x", addr, data1, data2);
 	//Assert(data1 == data2, "cache_read fail, addr:0x%x, dram:0x%x cache:0x%x", addr, data1, data2);
 	//return dram_read(addr, len) & (~0u >> ((4 - len) << 3));
-	cpu_time_2 += 200;
 	return cache_read(addr, len) & (~0u >> ((4 - len) << 3));
 }
 
 void hwaddr_write(hwaddr_t addr, size_t len, uint32_t data) {
-	cpu_time_2 += 200;
 	cache_write(addr, len, data);
 	//dram_write(addr, len, data);
 }
