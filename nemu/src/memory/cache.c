@@ -83,7 +83,7 @@ uint32_t cache_read(hwaddr_t addr, size_t len) {
         unalign_rw(temp + NR_COL - col, 4) = cache_read(addr + NR_COL - col, len);
         Assert(addr + NR_COL - col == ((addr + NR_COL - col) & ~COL_MASK),
                "second cache read fail, addr: %x", addr + NR_COL - col);
-        len = len - (NR_COL - col);
+        len = NR_COL - col;
     }
     for(i = 0; i < NR_ROW; i++) {
         if(cache[set][i].valid && cache[set][i].tag == tag) {
@@ -109,7 +109,7 @@ void cache_write(hwaddr_t addr, size_t len, uint32_t data) {
     // addr cross boundary
     if(col + len > NR_COL) {
         cache_write(addr + NR_COL - col, len - (NR_COL - col), data >> (8*(NR_COL - col)));
-        len = len - (NR_COL - col);
+        len = NR_COL - col;
     }
     for(i = 0; i < NR_ROW; i++) {
         if(cache[set][i].valid && cache[set][i].tag == tag) {
