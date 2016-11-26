@@ -21,6 +21,11 @@ void load_sreg(uint32_t sreg) {
     SegDesc *segdesc = (SegDesc*)tmp;
     uint32_t limit = (segdesc->limit_19_16 << 16) + segdesc->limit_15_0;
 	uint32_t base = (segdesc->base_31_24 << 24) + (segdesc->base_23_16 << 16) + segdesc->base_15_0;
+	printf("present %d\n", segdesc->present);
+	printf("limit %x\n", limit);
+	printf("base %x\n", base);
+	//Assert(segdesc->present == 1, "Segdesc is not valid! 0x%x", cpu.GDTR.Base + cpu.SR[sreg].Index * 8);
+	//Assert(cpu.SR[sreg].Index * 8 < limit, "Segment overflow: limit %d", cpu.SR_cache[sreg].limit);
 	cpu.SR_cache[sreg].valid = true;
 	cpu.SR_cache[sreg].limit = limit;
 	cpu.SR_cache[sreg].base = base;
@@ -39,7 +44,5 @@ lnaddr_t seg_translate(swaddr_t addr, size_t len, uint8_t sreg) {
 
     if(cpu.SR_cache[sreg].valid == 0)
         load_sreg(sreg);
-	//Assert(segdesc->present == 1, "Segdesc is not valid! 0x%x", cpu.GDTR.Base + cpu.SR[sreg].Index * 8);
-	//Assert(cpu.SR[sreg].Index * 8 < cpu.SR_cache[sreg].limit, "Segment overflow: limit %d", cpu.SR_cache[sreg].limit);
 	return cpu.SR_cache[sreg].base + addr;
 }
