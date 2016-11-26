@@ -12,9 +12,12 @@ void load_sreg(uint32_t sreg) {
 	// load seg_descriptor into cache
     uint8_t tmp[8];
 	int i;
+	printf("desc: sreg %d, 0x%x\n", sreg, cpu.SR[sreg].Index);
     for(i = 0; i < 8; i++) {
         tmp[i] = lnaddr_read(cpu.GDTR.Base + cpu.SR[sreg].Index * 8 + i, 1);
+		printf("%d ", tmp[i]);
     }
+	printf("\n");
     SegDesc *segdesc = (SegDesc*)tmp;
     uint32_t limit = (segdesc->limit_19_16 << 16) + segdesc->limit_15_0;
 	uint32_t base = (segdesc->base_31_24 << 24) + (segdesc->base_23_16 << 16) + segdesc->base_15_0;
