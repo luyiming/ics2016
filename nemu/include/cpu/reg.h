@@ -14,6 +14,12 @@ enum { R_AL, R_CL, R_DL, R_BL, R_AH, R_CH, R_DH, R_BH };
  * For more details about the register encoding scheme, see i386 manual.
  */
 
+ typedef struct {
+     uint16_t RPL   :2;
+     uint16_t TI    :1;
+     uint16_t Index:13;
+ } SegSel;
+
 typedef struct {
     union {
         union {
@@ -56,7 +62,11 @@ typedef struct {
         uint32_t eflags;
     };
 
-    uint16_t CS, SS, DS, ES; // initialized to zero
+
+    union{
+        SegSel SR[4];
+        struct {uint16_t ES, CS, SS, DS;}; // initialized to zero
+    };
 
     struct {
         unsigned Limit: 16;
@@ -78,8 +88,8 @@ typedef struct {
             uint32_t extension_type      : 1;
             uint32_t numeric_error       : 1;
             uint32_t pad0                : 10;
-            uint32_t write_protect       : 1; 
-            uint32_t pad1                : 1; 
+            uint32_t write_protect       : 1;
+            uint32_t pad1                : 1;
             uint32_t alignment_mask      : 1;
             uint32_t pad2                : 10;
             uint32_t no_write_through    : 1;
