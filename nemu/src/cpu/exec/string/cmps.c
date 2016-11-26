@@ -1,8 +1,8 @@
 #include "cpu/exec/helper.h"
 
 make_helper(cmps_b) {
-    uint8_t x = swaddr_read(reg_l(R_ESI), 1);
-    uint8_t y = swaddr_read(reg_l(R_EDI), 1);
+    uint8_t x = swaddr_read(reg_l(R_ESI), 1, R_DS);
+    uint8_t y = swaddr_read(reg_l(R_EDI), 1, R_ES);
     uint8_t z = x - y;
     int8_t zs = x - y;
 
@@ -29,8 +29,8 @@ make_helper(cmps_b) {
 }
 
 make_helper(cmps_w) {
-    uint16_t x = swaddr_read(reg_l(R_ESI), 2);
-    uint16_t y = swaddr_read(reg_l(R_EDI), 2);
+    uint16_t x = swaddr_read(reg_l(R_ESI), 2, R_DS);
+    uint16_t y = swaddr_read(reg_l(R_EDI), 2, R_ES);
     uint16_t z = x - y;
     int16_t zs = x - y;
 
@@ -57,8 +57,8 @@ make_helper(cmps_w) {
 }
 
 make_helper(cmps_l) {
-    uint32_t x = swaddr_read(reg_l(R_ESI), 4);
-    uint32_t y = swaddr_read(reg_l(R_EDI), 4);
+    uint32_t x = swaddr_read(reg_l(R_ESI), 4, R_DS);
+    uint32_t y = swaddr_read(reg_l(R_EDI), 4, R_ES);
     uint32_t z = x - y;
     int32_t zs = x - y;
 

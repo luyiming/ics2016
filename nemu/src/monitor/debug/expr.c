@@ -213,7 +213,7 @@ static int calc_once(int op) {
                 printf("Address out of range: 0x%x\t %d\n", v_st[v_top], v_st[v_top]);
                 return 0;
             }
-            v_st[v_top] = swaddr_read(v_st[v_top], 4);
+            v_st[v_top] = swaddr_read(v_st[v_top], 4, R_DS);
             break;
         case '!':
             if(v_top < 0) {

@@ -1,7 +1,7 @@
 #include "cpu/exec/helper.h"
 
 make_helper(lods_b) {
-    reg_b(R_AL) = swaddr_read(reg_l(R_ESI), 1);
+    reg_b(R_AL) = swaddr_read(reg_l(R_ESI), 1, R_DS);
     if(cpu.DF == 0)
         reg_l(R_ESI) += 1;
     else
@@ -11,7 +11,7 @@ make_helper(lods_b) {
 }
 
 make_helper(lods_w) {
-    reg_w(R_AX) = swaddr_read(reg_l(R_ESI), 2);
+    reg_w(R_AX) = swaddr_read(reg_l(R_ESI), 2, R_DS);
     if(cpu.DF == 0)
         reg_l(R_ESI) += 2;
     else
@@ -21,7 +21,7 @@ make_helper(lods_w) {
 }
 
 make_helper(lods_l) {
-    reg_l(R_EAX) = swaddr_read(reg_l(R_ESI), 4);
+    reg_l(R_EAX) = swaddr_read(reg_l(R_ESI), 4, R_DS);
     if(cpu.DF == 0)
         reg_l(R_ESI) += 4;
     else

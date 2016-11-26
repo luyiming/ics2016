@@ -60,13 +60,13 @@ int load_addr(swaddr_t eip, ModR_M *m, Operand *rm) {
 	else { disp_buf[0] = '\0'; }
 
 	if(base_reg == -1) { base_buf[0] = '\0'; }
-	else { 
-		sprintf(base_buf, "%%%s", regsl[base_reg]); 
+	else {
+		sprintf(base_buf, "%%%s", regsl[base_reg]);
 	}
 
 	if(index_reg == -1) { index_buf[0] = '\0'; }
-	else { 
-		sprintf(index_buf, ",%%%s,%d", regsl[index_reg], 1 << scale); 
+	else {
+		sprintf(index_buf, ",%%%s,%d", regsl[index_reg], 1 << scale);
 	}
 
 	if(base_reg == -1 && index_reg == -1) {
@@ -79,7 +79,7 @@ int load_addr(swaddr_t eip, ModR_M *m, Operand *rm) {
 
 	rm->type = OP_TYPE_MEM;
 	rm->addr = addr;
-
+	rm->sreg = (base_reg == R_EBP || base_reg == R_ESP) ? R_SS : R_DS;
 	return instr_len;
 }
 
@@ -109,8 +109,7 @@ int read_ModR_M(swaddr_t eip, Operand *rm, Operand *reg) {
 	}
 	else {
 		int instr_len = load_addr(eip, &m, rm);
-		rm->val = swaddr_read(rm->addr, rm->size);
+		rm->val = swaddr_read(rm->addr, rm->size, rm->sreg);
 		return instr_len;
 	}
 }
-

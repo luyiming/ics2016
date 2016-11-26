@@ -2,7 +2,7 @@
 
 make_helper(scas_b) {
     uint8_t x = reg_b(R_AL);
-    uint8_t y = swaddr_read(reg_l(R_EDI), 1);
+    uint8_t y = swaddr_read(reg_l(R_EDI), 1, R_ES);
     uint8_t z = x - y;
     int8_t zs = x - y;
 
@@ -28,7 +28,7 @@ make_helper(scas_b) {
 
 make_helper(scas_w) {
     uint16_t x = reg_w(R_AX);
-    uint16_t y = swaddr_read(reg_l(R_EDI), 2);
+    uint16_t y = swaddr_read(reg_l(R_EDI), 2, R_ES);
     uint16_t z = x - y;
     int16_t zs = x - y;
 
@@ -54,7 +54,7 @@ make_helper(scas_w) {
 
 make_helper(scas_l) {
     uint32_t x = reg_l(R_EAX);
-    uint32_t y = swaddr_read(reg_l(R_EDI), 4);
+    uint32_t y = swaddr_read(reg_l(R_EDI), 4, R_ES);
     uint32_t z = x - y;
     int32_t zs = x - y;
 

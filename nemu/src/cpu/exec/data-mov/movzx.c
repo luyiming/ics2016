@@ -7,7 +7,7 @@ make_helper(movzx_rm2r_b2w) {
          reg_w(op_dest->reg) = (uint16_t)reg_b(op_src->reg);
     }
     else if(op_src->type == OP_TYPE_MEM) {
-        uint8_t t = (uint8_t)swaddr_read(op_src->addr, 1);
+        uint8_t t = (uint8_t)swaddr_read(op_src->addr, 1, op_src->sreg);
         reg_w(op_dest->reg) = (uint16_t)t;
     }
 
@@ -22,7 +22,7 @@ make_helper(movzx_rm2r_b2l) {
          reg_l(op_dest->reg) = (uint32_t)reg_b(op_src->reg);
     }
     else if(op_src->type == OP_TYPE_MEM) {
-        uint8_t t = (uint8_t)swaddr_read(op_src->addr, 1);
+        uint8_t t = (uint8_t)swaddr_read(op_src->addr, 1, op_src->sreg);
         reg_l(op_dest->reg) = (uint32_t)t;
     }
 
@@ -37,7 +37,7 @@ make_helper(movzx_rm2r_w2l) {
          reg_l(op_dest->reg) = (uint32_t)reg_w(op_src->reg);
     }
     else if(op_src->type == OP_TYPE_MEM) {
-        uint16_t t = (uint16_t)swaddr_read(op_src->addr, 2);
+        uint16_t t = (uint16_t)swaddr_read(op_src->addr, 2, op_src->sreg);
         reg_l(op_dest->reg) = (uint32_t)t;
     }
 

@@ -152,10 +152,10 @@ static int cmd_x(char *args) {
     uint32_t t_addr = expr(arg, &success);
     for(i = 0; i < n; i ++)
     {
-        printf("%8x :\t0x%08x\t", t_addr + 4 * i, swaddr_read(t_addr + 4 * i, 4));
+        printf("%8x :\t0x%08x\t", t_addr + 4 * i, swaddr_read(t_addr + 4 * i, 4, R_DS));
         int j;
         for(j = 0; j < 4; j ++) {
-            printf("%02x ", swaddr_read(t_addr + 4 * i + j, 1));
+            printf("%02x ", swaddr_read(t_addr + 4 * i + j, 1, R_DS));
         }
         printf("\n");
     }
@@ -219,7 +219,7 @@ static int cmd_bt(char *args) {
 	do {
 		int i;
 		for(i = 0; i < 4; i ++) {
-			func_args[i] = swaddr_read(cur_ebp + 8 + 4 * i, 4);
+			func_args[i] = swaddr_read(cur_ebp + 8 + 4 * i, 4, R_SS);
 		}
 		if(cnt == 0)
 			func_name = get_symbol_name(cpu.eip);
@@ -229,8 +229,8 @@ static int cmd_bt(char *args) {
 			printf("#%d  %s (%x, %x, %x, %x)\n", cnt, func_name, func_args[0], func_args[1], func_args[2], func_args[3]);
 		else
 			printf("#%d  0x%x in %s (%x, %x, %x, %x)\n", cnt, ret_addr, func_name, func_args[0], func_args[1], func_args[2], func_args[3]);
-		ret_addr = swaddr_read(cur_ebp + 4, 4);
-		cur_ebp = swaddr_read(cur_ebp, 4);
+		ret_addr = swaddr_read(cur_ebp + 4, 4, R_SS);
+		cur_ebp = swaddr_read(cur_ebp, 4, R_SS);
 		cnt++;
 	} while(cur_ebp != 0);
     return 0;

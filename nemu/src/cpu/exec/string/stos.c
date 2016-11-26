@@ -2,7 +2,7 @@
 
 make_helper(stos_b) {
     uint8_t val = reg_b(R_AL);
-    swaddr_write(reg_l(R_EDI), 1, val);
+    swaddr_write(reg_l(R_EDI), 1, val, R_ES);
     if(cpu.DF == 0)
         reg_l(R_EDI) += 1;
     else
@@ -13,7 +13,7 @@ make_helper(stos_b) {
 
 make_helper(stos_w) {
     uint16_t val = reg_w(R_AX);
-    swaddr_write(reg_l(R_EDI), 2, val);
+    swaddr_write(reg_l(R_EDI), 2, val, R_ES);
     if(cpu.DF == 0)
         reg_l(R_EDI) += 2;
     else
@@ -24,7 +24,7 @@ make_helper(stos_w) {
 
 make_helper(stos_l) {
     uint32_t val = reg_l(R_EAX);
-    swaddr_write(reg_l(R_EDI), 4, val);
+    swaddr_write(reg_l(R_EDI), 4, val, R_ES);
     if(cpu.DF == 0)
         reg_l(R_EDI) += 4;
     else

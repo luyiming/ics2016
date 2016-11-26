@@ -6,7 +6,7 @@
 // push imm8 stores 4 bytes
 static void do_execute () {
     cpu.esp -= 4;
-    swaddr_write(cpu.esp, 4, op_src->val);
+    swaddr_write(cpu.esp, 4, op_src->val, R_SS);
 
     print_asm_template1();
 }
@@ -17,7 +17,7 @@ static void do_execute () {
 
 static void do_execute () {
     cpu.esp -= DATA_BYTE;
-    swaddr_write(cpu.esp, DATA_BYTE, op_src->val);
+    swaddr_write(cpu.esp, DATA_BYTE, op_src->val, R_SS);
 
     print_asm_template1();
 }

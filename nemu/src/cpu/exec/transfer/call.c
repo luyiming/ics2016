@@ -2,7 +2,7 @@
 
 make_helper(call_rel32) {
     cpu.esp -= 4;
-    swaddr_write(cpu.esp, 4, eip + 5);
+    swaddr_write(cpu.esp, 4, eip + 5, R_SS);
 
     int32_t rel32 = instr_fetch(eip + 1, 4);
     cpu.eip = (int32_t)cpu.eip + rel32;
@@ -15,7 +15,7 @@ make_helper(call_rm_w) {
     int len = decode_rm_w(eip + 1);
 
     cpu.esp -= 2;
-    swaddr_write(cpu.esp, 2, eip + len + 1);
+    swaddr_write(cpu.esp, 2, eip + len + 1, R_SS);
 
     cpu.eip = op_src->val;
 
@@ -28,7 +28,7 @@ make_helper(call_rm_l) {
     int len = decode_rm_l(eip + 1);
 
     cpu.esp -= 4;
-    swaddr_write(cpu.esp, 4, eip + len + 1);
+    swaddr_write(cpu.esp, 4, eip + len + 1, R_SS);
 
     cpu.eip = op_src->val;
 
