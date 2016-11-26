@@ -2,7 +2,7 @@
 #define __COMMON_H__
 
 /* Uncomment these macros to enable corresponding functionality. */
-//#define IA32_SEG
+#define IA32_SEG
 //#define IA32_PAGE
 //#define IA32_INTR
 //#define HAS_DEVICE
@@ -21,8 +21,6 @@ typedef uint8_t bool;
 #define false 0
 
 #define NULL ((void *)0)
-
-#define IA32_SEG
 
 #include "debug.h"
 

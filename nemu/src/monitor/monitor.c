@@ -92,7 +92,7 @@ void restart() {
 	/* Initialize registers. */
 	cpu.eflags = 0x2;
 	cpu.CS = cpu.SS = cpu.DS = cpu.ES = 0;
-	cpu.CR0 = 0;
+	cpu.CR0.val = 0;
 	
 	/* Initialize DRAM. */
 	init_ddr3();

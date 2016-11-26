@@ -68,34 +68,42 @@ typedef struct {
         unsigned Base : 32;
     } IDTR;
 
+    /* the Control Register 0 */
     union {
         struct {
-            unsigned PE: 1; // Protection Enable.
-            unsigned MP: 1; // Math Present
-            unsigned EM: 1; // Emulation
-            unsigned TS: 1; // Task Switched
-            unsigned ET: 1; // Extension Type
-            unsigned   :26;
-            unsigned PG: 1; // Paging
+            uint32_t protect_enable      : 1;
+            uint32_t monitor_coprocessor : 1;
+            uint32_t emulation           : 1;
+            uint32_t task_switched       : 1;
+            uint32_t extension_type      : 1;
+            uint32_t numeric_error       : 1;
+            uint32_t pad0                : 10;
+            uint32_t write_protect       : 1; 
+            uint32_t pad1                : 1; 
+            uint32_t alignment_mask      : 1;
+            uint32_t pad2                : 10;
+            uint32_t no_write_through    : 1;
+            uint32_t cache_disable       : 1;
+            uint32_t paging              : 1;
         };
-        uint32_t CR0; //initialized to zero
-    };
+        uint32_t val; //initialized to zero
+    } CR0;
 
     /* CR2 is used for handling page faults when PG is set. The processor stores
      * in CR2 the linear address that triggers the fault.
      */
-    uint32_t CR2;
 
-    /* CR3 is used when PG is set. CR3 enables the processor to locate the page
-     * table directory for the current task.
-     */
+    /* the Control Register 3 (physical address of page directory) */
     union {
         struct {
-            unsigned : 10  ; //TODO
-            unsigned PDBR: 10;
+            uint32_t pad0                : 3;
+            uint32_t page_write_through  : 1;
+            uint32_t page_cache_disable  : 1;
+            uint32_t pad1                : 7;
+            uint32_t page_directory_base : 20;
         };
-        uint32_t CR3;
-    };
+        uint32_t val;
+    } CR3;
 
 	swaddr_t eip;
 
