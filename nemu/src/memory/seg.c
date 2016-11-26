@@ -37,6 +37,6 @@ lnaddr_t seg_translate(swaddr_t addr, size_t len, uint8_t sreg) {
     if(cpu.SR_cache[sreg].valid == 0)
         load_sreg(sreg);
 	//Assert(segdesc->present == 1, "Segdesc is not valid! 0x%x", cpu.GDTR.Base + cpu.SR[sreg].Index * 8);
-	Assert(cpu.SR[sreg].Index * 8 < cpu.SR_cache[sreg].limit, "Segment overflow: limit %d", cpu.SR_cache[sreg].limit);
+	//Assert(cpu.SR[sreg].Index * 8 < cpu.SR_cache[sreg].limit, "Segment overflow: limit %d", cpu.SR_cache[sreg].limit);
 	return cpu.SR_cache[sreg].base + addr;
 }
