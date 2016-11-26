@@ -76,7 +76,7 @@ typedef struct {
         bool valid;
         uint32_t base;
         uint32_t limit;
-        uint32_t dpl : 2;
+        uint32_t DPL : 2;
     } SR_cache[4];
 
     struct {
