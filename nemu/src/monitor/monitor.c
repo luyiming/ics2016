@@ -12,6 +12,7 @@ void init_wp_pool();
 void init_ddr3();
 void init_cache();
 void init_L2_cache();
+void init_seg();
 
 FILE *log_fp = NULL;
 
@@ -93,11 +94,14 @@ void restart() {
 	cpu.eflags = 0x2;
 	cpu.CS = cpu.SS = cpu.DS = cpu.ES = 0;
 	cpu.CR0.val = 0;
-	
+
 	/* Initialize DRAM. */
 	init_ddr3();
 
-    /* Initialize Cache */
+	/* Initialize Cache */
 	init_cache();
-    init_L2_cache();
+	init_L2_cache();
+
+	/* Initialize Segment */
+	init_seg();
 }

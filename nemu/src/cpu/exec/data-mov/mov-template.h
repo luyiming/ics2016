@@ -28,4 +28,13 @@ make_helper(concat(mov_moffs2a_, SUFFIX)) {
 	return 5;
 }
 
+void load_sreg(uint32_t);
+make_helper(concat(mov_rm2s_, SUFFIX)) {
+	uint8_t r = instr_fetch(eip + 1, 1);
+	sreg((r >> 3) & 0x7) = (uint16_t)REG(r & 0x7);
+	load_sreg((r >> 3) & 0x7);
+	print_asm("mov" str(SUFFIX) " %%%s,%%%s", REG_NAME(r & 0x7), SREG_NAME((r >> 3) & 0x7));
+	return 2;
+}
+
 #include "cpu/exec/template-end.h"

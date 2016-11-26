@@ -15,10 +15,13 @@ enum { R_ES, R_CS, R_SS, R_DS };
  * For more details about the register encoding scheme, see i386 manual.
  */
 
- typedef struct {
-     uint16_t RPL   :2;
-     uint16_t TI    :1;
-     uint16_t Index:13;
+typedef union {
+    struct {
+         uint16_t RPL   :2;
+         uint16_t TI    :1;
+         uint16_t Index:13;
+    };
+    uint16_t val;
  } SegSel;
 
 typedef struct {
@@ -68,6 +71,13 @@ typedef struct {
         SegSel SR[4];
         struct {uint16_t ES, CS, SS, DS;}; // initialized to zero
     };
+
+    struct {
+        bool valid;
+        uint32_t base;
+        uint32_t limit;
+        uint32_t dpl : 2;
+    } SR_cache[4];
 
     struct {
         unsigned Limit: 16;
@@ -130,9 +140,11 @@ static inline int check_reg_index(int index) {
 #define reg_l(index) (cpu.gpr[check_reg_index(index)]._32)
 #define reg_w(index) (cpu.gpr[check_reg_index(index)]._16)
 #define reg_b(index) (cpu.gpr[check_reg_index(index) & 0x3]._8[index >> 2])
+#define sreg(index) (cpu.SR[check_reg_index(index)].val)
 
 extern const char* regsl[];
 extern const char* regsw[];
 extern const char* regsb[];
+extern const char* sregs[];
 
 #endif
