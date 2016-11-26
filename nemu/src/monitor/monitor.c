@@ -90,6 +90,9 @@ void restart() {
 	/* Set the initial instruction pointer. */
 	cpu.eip = ENTRY_START;
 
+	/* Initialize Segment */
+	init_seg();
+	
 	/* Initialize registers. */
 	cpu.eflags = 0x2;
 	cpu.CS = cpu.SS = cpu.DS = cpu.ES = 0;
@@ -102,6 +105,4 @@ void restart() {
 	init_cache();
 	init_L2_cache();
 
-	/* Initialize Segment */
-	init_seg();
 }
