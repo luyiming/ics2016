@@ -10,6 +10,7 @@
 void cpu_exec(uint32_t);
 extern char* get_symbol_name(uint32_t addr);
 void debug_cache(hwaddr_t addr);
+void debug_page(lnaddr_t addr);
 extern uint64_t cpu_time;
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
@@ -61,6 +62,7 @@ static int cmd_w(char *args);
 static int cmd_d(char *args);
 static int cmd_bt(char *args);
 static int cmd_addr(char *args);
+static int cmd_page(char *args);
 
 static struct {
 	char *name;
@@ -78,6 +80,7 @@ static struct {
 	{ "d", "Delete watchpoint", cmd_d },
 	{ "bt", "Print stack chain", cmd_bt },
 	{ "addr", "Print cache addr info.", cmd_addr },
+	{ "page", "Print page translation info.", cmd_page },
 
 	/* TODO: Add more commands */
 
@@ -277,6 +280,27 @@ static int cmd_addr(char *args) {
     else {
         debug_cache(n);
     }
+    return 0;
+}
+
+lnaddr_t seg_translate(swaddr_t addr, uint8_t sreg);
+static int cmd_page(char *args){
+    if(args == NULL){
+        printf("Please input a number!\n");
+        return 0;
+    }
+    bool success = false;
+    int addr = expr(args, &success);
+    if(success) {
+		lnaddr_t lnaddr = seg_translate(addr, R_SS);
+	    printf("R_SS lnaddr = 0x%x\n", lnaddr);
+	    debug_page(lnaddr);
+		lnaddr = seg_translate(addr, R_DS);
+	    printf("R_DS lnaddr = 0x%x\n", lnaddr);
+	    debug_page(lnaddr);
+    }
+    else
+        printf("Bad expression\n");
     return 0;
 }
 
