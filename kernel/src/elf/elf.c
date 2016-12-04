@@ -71,6 +71,6 @@ uint32_t loader() {
 
 	write_cr3(get_ucr3());
 #endif
-	HIT_GOOD_TRAP;
+
 	return entry;
 }
