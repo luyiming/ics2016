@@ -94,6 +94,7 @@ void restart() {
 	cpu.eflags = 0x2;
 	cpu.CS = cpu.SS = cpu.DS = cpu.ES = 0;
 	cpu.CR0.val = 0;
+	cpu.CS = 8;
 
 	/* Initialize DRAM. */
 	init_ddr3();
