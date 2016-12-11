@@ -13,6 +13,7 @@ void init_ddr3();
 void init_cache();
 void init_L2_cache();
 void init_seg();
+void init_tlb();
 
 FILE *log_fp = NULL;
 
@@ -102,6 +103,8 @@ void restart() {
 	/* Initialize Cache */
 	init_cache();
 	init_L2_cache();
+
+	init_tlb();
 
 	/* Initialize Segment */
 	init_seg();
