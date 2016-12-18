@@ -46,5 +46,7 @@
 #include "transfer/jcc.h"
 #include "transfer/ret.h"
 #include "transfer/jmp.h"
+#include "transfer/iret.h"
+#include "transfer/int.h"
 
 #include "special/special.h"
