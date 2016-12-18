@@ -1,4 +1,5 @@
 #include "cpu/exec/template-start.h"
+#include "cpu/reg.h"
 
 #define instr pusha
 
@@ -11,7 +12,7 @@ static void do_execute(){
 			swaddr_write(cpu.esp, DATA_BYTE, temp, R_SS);
 		}
 		else{
-			swaddr_write(cpu.esp, DATA_BYTE, cpu.gpr[i]._32, R_SS);
+			swaddr_write(cpu.esp, DATA_BYTE, reg_l(i), R_SS);
 		}
 	}
 	print_asm("pusha");
