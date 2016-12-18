@@ -9,5 +9,6 @@ make_helper(lgdt);
 make_helper(lidt);
 make_helper(std);
 make_helper(cld);
+make_helper(cli);
 
 #endif
