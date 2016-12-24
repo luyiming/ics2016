@@ -21,7 +21,6 @@ uint32_t loader() {
 	Elf32_Phdr *ph = NULL;
 
 	uint8_t buf[4096];
-	uint8_t buf_[1 << 20];
 
 #ifdef HAS_DEVICE
 	ide_read(buf, ELF_OFFSET_IN_DISK, 4096);
@@ -41,20 +40,17 @@ uint32_t loader() {
 	int i;
 	for(i = 0; i < elf->e_phnum; ++i) {
 		/* Scan the program header table, load each segment into memory */
-		ph = (void*)(buf + elf->e_ehsize + i * elf->e_phentsize);
 		if(ph->p_type == PT_LOAD) {
 			/* read the content of the segment from the ELF file
 			 * to the memory region [VirtAddr, VirtAddr + FileSiz)
 			 */
+			uint32_t hwaddr = mm_malloc(ph->p_vaddr, ph->p_memsz);
 
 #ifdef HAS_DEVICE
-			ide_read(buf_, ph->p_offset, ph->p_filesz);
+			ide_read((uint8_t *)hwaddr, ph->p_offset, ph->p_filesz);
 #else
-			ramdisk_read(buf_, ph->p_offset, ph->p_filesz);
+			ramdisk_read((uint8_t *)hwaddr, ph->p_offset, ph->p_filesz);
 #endif
-
-			uint32_t hwaddr = mm_malloc(ph->p_vaddr, ph->p_memsz);
-			memcpy((void *)hwaddr, (void *)(buf_), ph->p_filesz);
 			/* zero the memory region [VirtAddr + FileSiz, VirtAddr + MemSiz) */
 			memset((uint8_t *)hwaddr + ph->p_filesz, 0, ph->p_memsz - ph->p_filesz);
 
@@ -65,7 +61,7 @@ uint32_t loader() {
 			if(cur_brk < new_brk) { max_brk = cur_brk = new_brk; }
 #endif
 		}
-		//ph++;
+		ph++;
 	}
 
 	volatile uint32_t entry = elf->e_entry;
