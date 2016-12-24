@@ -58,7 +58,7 @@ void lnaddr_write(lnaddr_t addr, size_t len, uint32_t data) {
 	assert(len == 1 || len == 2 || len == 4);
 	if(cpu.CR0.paging == 0)
 		return hwaddr_write(addr, len, data);
-	if ((addr & 0xfff) + len > 0x1000) {
+	if (false/*(addr & 0xfff) + len > 0x1000*/) {
 		assert(0);
 	}
 	else {
