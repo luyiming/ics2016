@@ -70,3 +70,9 @@ make_helper(cli){
 	print_asm("cli");
 	return 1;
 }
+
+make_helper(hlt) {
+	while (!cpu.INTR);
+	print_asm("hlt");
+	return 1;
+}
