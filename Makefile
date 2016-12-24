@@ -53,7 +53,7 @@ clean: clean-cpp
 
 ##### some convinient rules #####
 
-USERPROG := obj/testcase/hello
+USERPROG := $(game_BIN) #obj/testcase/hello
 # ENTRY := $(USERPROG)
 ENTRY := $(kernel_BIN)
 
@@ -77,4 +77,3 @@ submit: clean
 
 count:
 	./count.sh
-
