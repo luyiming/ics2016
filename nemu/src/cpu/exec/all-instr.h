@@ -10,6 +10,7 @@
 #include "data-mov/pusha.h"
 #include "data-mov/popa.h"
 #include "data-mov/in.h"
+#include "data-mov/out.h"
 
 #include "arith/dec.h"
 #include "arith/inc.h"
