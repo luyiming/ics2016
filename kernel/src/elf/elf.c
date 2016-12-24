@@ -45,8 +45,12 @@ uint32_t loader() {
 			 * to the memory region [VirtAddr, VirtAddr + FileSiz)
 			 */
 			uint32_t hwaddr = mm_malloc(ph->p_vaddr, ph->p_memsz);
-			ramdisk_read((uint8_t *)hwaddr, ph->p_offset, ph->p_filesz);
 
+#ifdef HAS_DEVICE
+			ide_read((uint8_t *)hwaddr, ph->p_offset, ph->p_filesz);
+#else
+			ramdisk_read((uint8_t *)hwaddr, ph->p_offset, ph->p_filesz);
+#endif
 			/* zero the memory region [VirtAddr + FileSiz, VirtAddr + MemSiz) */
 			memset((uint8_t *)hwaddr + ph->p_filesz, 0, ph->p_memsz - ph->p_filesz);
 
