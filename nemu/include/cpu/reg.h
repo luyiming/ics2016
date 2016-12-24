@@ -126,7 +126,9 @@ typedef struct {
         uint32_t val;
     } CR3;
 
-	swaddr_t eip;
+    bool INTR;
+
+    swaddr_t eip;
 
 } CPU_state;
 
