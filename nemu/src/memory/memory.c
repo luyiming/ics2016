@@ -40,13 +40,11 @@ uint32_t lnaddr_read(lnaddr_t addr, size_t len) {
 	if((addr & 0xfff) + len > 0x1000) {
 		/*	this	is	a	special	case,	you	can	handle	it	later.	*/
 		//assert(0);
-		uint32_t off = addr & 0xfff;
-//			printf("%x %d %x %d %d\n", addr, len, off, 0x1000 - off, len - limit + off);
-		hwaddr_t hwaddr2;
-		hwaddr_t hwaddr = page_translate(addr);
-		hwaddr2 = page_translate(addr + 0x1000 - off);
-		return hwaddr_read(hwaddr, 0x1000 - off) +
-			(hwaddr_read(hwaddr2, len - 0x1000 + off) << ((0x1000 - off) * 8));
+        int first = 0x1000 - (addr & 0xfff);
+        int second = len - first;
+        uint32_t data1 = lnaddr_read(addr, first);
+        uint32_t data2 = lnaddr_read(addr + first, second);
+        return (data2 << (first * 8)) + data1;
 	}
 	else {
 		hwaddr_t hwaddr = page_translate(addr);
@@ -58,8 +56,13 @@ void lnaddr_write(lnaddr_t addr, size_t len, uint32_t data) {
 	assert(len == 1 || len == 2 || len == 4);
 	if(cpu.CR0.paging == 0)
 		return hwaddr_write(addr, len, data);
-	if (false/*(addr & 0xfff) + len > 0x1000*/) {
-		assert(0);
+	if ((addr & 0xfff) + len > 0x1000) {
+		//assert(0);
+        int first = 0x1000 - (addr & 0xfff);
+        int second = len - first;
+        lnaddr_write(addr, first, data);
+        uint32_t data2 = data >> (first * 8);
+        lnaddr_write(addr + first, second, data2);
 	}
 	else {
 		hwaddr_t hwaddr = page_translate(addr);
