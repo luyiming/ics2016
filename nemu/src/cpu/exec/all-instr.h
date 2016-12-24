@@ -9,6 +9,7 @@
 #include "data-mov/cwtl_cltd.h"
 #include "data-mov/pusha.h"
 #include "data-mov/popa.h"
+#include "data-mov/in.h"
 
 #include "arith/dec.h"
 #include "arith/inc.h"
