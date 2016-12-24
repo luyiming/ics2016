@@ -5,6 +5,7 @@
 void add_irq_handle(int, void (*)(void));
 uint32_t mm_brk(uint32_t);
 int fs_ioctl(int, uint32_t, void *);
+void serial_printc(char);
 
 static void sys_brk(TrapFrame *tf) {
 	tf->eax = mm_brk(tf->ebx);

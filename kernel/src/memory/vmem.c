@@ -5,6 +5,8 @@
 #define VMEM_ADDR 0xa0000
 #define SCR_SIZE (320 * 200)
 
+static PTE vptable[NR_PTE] align_to_page;
+
 /* Use the function to get the start address of user page directory. */
 PDE* get_updir();
 
