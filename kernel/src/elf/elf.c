@@ -41,6 +41,7 @@ uint32_t loader() {
 	int i;
 	for(i = 0; i < elf->e_phnum; ++i) {
 		/* Scan the program header table, load each segment into memory */
+		ph = (void*)(buf + elf->e_ehsize + i * elf->e_phentsize);
 		if(ph->p_type == PT_LOAD) {
 			/* read the content of the segment from the ELF file
 			 * to the memory region [VirtAddr, VirtAddr + FileSiz)
@@ -64,7 +65,7 @@ uint32_t loader() {
 			if(cur_brk < new_brk) { max_brk = cur_brk = new_brk; }
 #endif
 		}
-		ph++;
+		//ph++;
 	}
 
 	volatile uint32_t entry = elf->e_entry;
