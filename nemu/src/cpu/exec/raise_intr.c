@@ -9,9 +9,10 @@ void swaddr_write(swaddr_t, size_t, uint32_t, uint8_t);
 void load_sreg(uint32_t);
 
 void raise_intr(uint8_t NO) {
-  /*	TODO:	Trigger	an	interrupt/exception	with	``NO''.
-	 	*	That	is,	use	``NO''	to	index	the	IDT.
-	 	*/
+    /*
+     * TODO:Trigger an interrupt/exception with 'NO'.
+     * That is, use 'NO' to index the IDT.
+     */
 	cpu.esp -= 4;
 	swaddr_write(cpu.esp, 4, cpu.eflags, R_SS);
 	cpu.esp -= 4;
