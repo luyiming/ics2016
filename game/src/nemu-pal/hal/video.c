@@ -7,7 +7,7 @@
 
 int get_fps();
 
-void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, 
+void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect,
 		SDL_Surface *dst, SDL_Rect *dstrect) {
 	assert(dst && src);
 
@@ -28,8 +28,13 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect,
 	 * `w' X `h' of `src' surface to position (`dx', `dy') of
 	 * `dst' surface.
 	 */
-
-	assert(0);
+	//assert(0);
+	int bpp = dst->pitch / dst->w;
+	int i;
+	for (i = 0; i < h; ++i) {
+		memcpy(dst->pixels + dx * bpp + (dy + i) * dst->pitch,
+			   src->pixels + sx * bpp + (sy + i) * src->pitch, w * bpp);
+	}
 }
 
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
@@ -40,11 +45,31 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
 	 * in surface `dst' with color `color'. If dstrect is
 	 * NULL, fill the whole surface.
 	 */
-
-	assert(0);
+	//assert(0);
+	int w, h, pitch;
+	pitch = dst->pitch;
+	if (dstrect == NULL) {
+		memset(dst->pixels, color & 0xff, pitch * dst->h);
+		return;
+	}
+	w = dstrect->w;
+	h = dstrect->h;
+	int bpp = pitch / dst->w;
+	int x, y, c;
+	x = dstrect->x;
+	if (dst->w - x < w) {
+		w = dst->w - x;
+	}
+	y = dstrect->y;
+	if (dst->h - y < h) {
+		h = dst->h - y;
+	}
+	for (c = 0; c < h; ++c) {
+		memset(dst->pixels + x * bpp + (y + c) * pitch, color & 0xff, w * bpp);
+	}
 }
 
-void SDL_SetPalette(SDL_Surface *s, int flags, SDL_Color *colors, 
+void SDL_SetPalette(SDL_Surface *s, int flags, SDL_Color *colors,
 		int firstcolor, int ncolors) {
 	assert(s);
 	assert(s->format);
@@ -53,7 +78,7 @@ void SDL_SetPalette(SDL_Surface *s, int flags, SDL_Color *colors,
 
 	if(s->format->palette->colors == NULL || s->format->palette->ncolors != ncolors) {
 		if(s->format->palette->ncolors != ncolors && s->format->palette->colors != NULL) {
-			/* If the size of the new palette is different 
+			/* If the size of the new palette is different
 			 * from the old one, free the old one.
 			 */
 			free(s->format->palette->colors);
@@ -70,7 +95,8 @@ void SDL_SetPalette(SDL_Surface *s, int flags, SDL_Color *colors,
 
 	if(s->flags & SDL_HWSURFACE) {
 		/* TODO: Set the VGA palette by calling write_palette(). */
-		assert(0);
+		// assert(0);
+		write_palette(colors, ncolors);
 	}
 }
 
@@ -92,7 +118,7 @@ void SDL_UpdateRect(SDL_Surface *screen, int x, int y, int w, int h) {
 	}
 }
 
-void SDL_SoftStretch(SDL_Surface *src, SDL_Rect *srcrect, 
+void SDL_SoftStretch(SDL_Surface *src, SDL_Rect *srcrect,
 		SDL_Surface *dst, SDL_Rect *dstrect) {
 	assert(src && dst);
 	int x = (srcrect == NULL ? 0 : srcrect->x);
@@ -157,7 +183,7 @@ void SDL_FreeSurface(SDL_Surface *s) {
 
 			free(s->format);
 		}
-		
+
 		if(s->pixels != NULL && s->pixels != VMEM_ADDR) {
 			free(s->pixels);
 		}
@@ -165,4 +191,3 @@ void SDL_FreeSurface(SDL_Surface *s) {
 		free(s);
 	}
 }
-
