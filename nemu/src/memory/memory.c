@@ -34,7 +34,7 @@ void hwaddr_write(hwaddr_t addr, size_t len, uint32_t data) {
 }
 
 uint32_t lnaddr_read(lnaddr_t addr, size_t len) {
-	assert(len == 1 || len == 2 || len == 4);
+	//assert(len == 1 || len == 2 || len == 4);
 	if(cpu.CR0.paging == 0)
 		return hwaddr_read(addr, len);
 	if((addr & 0xfff) + len > 0x1000) {
@@ -53,7 +53,7 @@ uint32_t lnaddr_read(lnaddr_t addr, size_t len) {
 }
 
 void lnaddr_write(lnaddr_t addr, size_t len, uint32_t data) {
-	assert(len == 1 || len == 2 || len == 4);
+	//assert(len == 1 || len == 2 || len == 4);
 	if(cpu.CR0.paging == 0)
 		return hwaddr_write(addr, len, data);
 	if ((addr & 0xfff) + len > 0x1000) {
@@ -78,7 +78,7 @@ uint32_t swaddr_read(swaddr_t addr, size_t len, uint8_t sreg) {
 	return lnaddr_read(lnaddr, len);
 }
 
-void swaddr_write(swaddr_t addr, size_t len, uint32_t data, uint8_t sreg) {
+void swaddr_write(swaddr_t addr, size_t len, uint8_t sreg, uint32_t data) {
 #ifdef DEBUG
 	assert(len == 1 || len == 2 || len == 4);
 #endif

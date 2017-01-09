@@ -3,16 +3,21 @@
 #define instr or
 
 static void do_execute () {
+	int i, count = 0;
 	DATA_TYPE result = op_dest->val | op_src->val;
 	OPERAND_W(op_dest, result);
 
 	/* Update EFLAGS. */
-	cpu.OF = 0;
+	//panic("please implement me");
 	cpu.CF = 0;
-	// cpu.AF undefined
+	cpu.OF = 0;
 	cpu.SF = MSB(result);
-	cpu.ZF = (result == 0 ? 1 : 0);
-	cpu.PF = get_parity(result);
+	cpu.ZF = (result == 0);
+	result &= 0xff;
+	for (i = 0; i < 8; i++, result >>= 1) {
+		count += (result & 0x1);
+	}
+	cpu.PF = (count % 2 == 0);
 
 	print_asm_template2();
 }

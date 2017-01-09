@@ -7,7 +7,51 @@ CPU_state cpu;
 const char *regsl[] = {"eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"};
 const char *regsw[] = {"ax", "cx", "dx", "bx", "sp", "bp", "si", "di"};
 const char *regsb[] = {"al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"};
-const char *sregs[] = {"es", "cs", "ss", "ds"};
+const char *sregs[] = {"es", "cs", "ss", "ds" };
+
+void p_info_r() {
+	int i;
+	for (i = 0; i < 8; i++) {
+		printf("$%-6s%-12u0x%.8x\n", regsl[i], cpu.gpr[i]._32, cpu.gpr[i]._32);
+	}
+	for (i = 0; i < 4; i++) {
+		printf("$%-6s%-12u0x%.8x\n", sregs[i], cpu.sr[i], cpu.sr[i]);
+	}
+	printf("$%-6s%-12u0x%.8x\n", "eip", cpu.eip, cpu.eip);
+	printf("%-7s[", "flags");
+	cpu.CF ? printf(" CF") : (void)0;
+	cpu.PF ? printf(" PF") : (void)0;
+	cpu.AF ? printf(" AF") : (void)0;
+	cpu.ZF ? printf(" ZF") : (void)0;
+	cpu.SF ? printf(" SF") : (void)0;
+	cpu.IF ? printf(" IF") : (void)0;
+	cpu.DF ? printf(" DF") : (void)0;
+	cpu.OF ? printf(" OF") : (void)0;
+	printf(" ]\n");
+	return;
+}
+
+uint32_t reg_val(char *reg, bool *success) {
+	/* reg should be lower chars */
+	int i;
+	*success = true;	
+	for (i = 0; i < 8; i++) {
+		if (strcmp(regsl[i], reg) == 0) {
+			return cpu.gpr[i]._32;
+		}
+		else if (strcmp(regsw[i], reg) == 0) {
+			return cpu.gpr[i]._16;
+		}
+		else if (strcmp(regsb[i], reg) == 0) {
+			return cpu.gpr[i % 4]._8[i / 4];
+		}
+	}
+	if (strcmp("eip", reg) == 0) {
+		return cpu.eip;
+	}
+	*success = false;
+	return -1;
+}
 
 void reg_test() {
 	srand(time(0));
@@ -42,3 +86,4 @@ void reg_test() {
 
 	assert(eip_sample == cpu.eip);
 }
+

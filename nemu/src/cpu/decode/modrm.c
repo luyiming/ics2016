@@ -8,24 +8,41 @@ int load_addr(swaddr_t eip, ModR_M *m, Operand *rm) {
 	int instr_len, disp_offset, disp_size = 4;
 	int base_reg = -1, index_reg = -1, scale = 0;
 	swaddr_t addr = 0;
+	rm->sreg = S_DS; /* default */
 
 	if(m->R_M == R_ESP) {
 		SIB s;
 		s.val = instr_fetch(eip + 1, 1);
 		base_reg = s.base;
+		if (s.base == R_EBP) {
+			rm->sreg = S_SS;
+		}
 		disp_offset = 2;
 		scale = s.ss;
 
-		if(s.index != R_ESP) { index_reg = s.index; }
+		if(s.index != R_ESP) 
+		{ 
+			index_reg = s.index; 
+			if (s.index == R_EBP) {
+				rm->sreg = S_SS;
+			}
+		}
 	}
 	else {
 		/* no SIB */
 		base_reg = m->R_M;
+		if (m->R_M == R_EBP) {
+			rm->sreg = S_SS;
+		}
 		disp_offset = 1;
 	}
 
 	if(m->mod == 0) {
-		if(base_reg == R_EBP) { base_reg = -1; }
+		if(base_reg == R_EBP) 
+		{ 
+			base_reg = -1; 
+			rm->sreg = S_DS;
+		}
 		else { disp_size = 0; }
 	}
 	else if(m->mod == 1) { disp_size = 1; }
@@ -60,13 +77,13 @@ int load_addr(swaddr_t eip, ModR_M *m, Operand *rm) {
 	else { disp_buf[0] = '\0'; }
 
 	if(base_reg == -1) { base_buf[0] = '\0'; }
-	else {
-		sprintf(base_buf, "%%%s", regsl[base_reg]);
+	else { 
+		sprintf(base_buf, "%%%s", regsl[base_reg]); 
 	}
 
 	if(index_reg == -1) { index_buf[0] = '\0'; }
-	else {
-		sprintf(index_buf, ",%%%s,%d", regsl[index_reg], 1 << scale);
+	else { 
+		sprintf(index_buf, ",%%%s,%d", regsl[index_reg], 1 << scale); 
 	}
 
 	if(base_reg == -1 && index_reg == -1) {
@@ -79,7 +96,7 @@ int load_addr(swaddr_t eip, ModR_M *m, Operand *rm) {
 
 	rm->type = OP_TYPE_MEM;
 	rm->addr = addr;
-	rm->sreg = (base_reg == R_EBP || base_reg == R_ESP) ? R_SS : R_DS;
+
 	return instr_len;
 }
 
@@ -113,3 +130,4 @@ int read_ModR_M(swaddr_t eip, Operand *rm, Operand *reg) {
 		return instr_len;
 	}
 }
+

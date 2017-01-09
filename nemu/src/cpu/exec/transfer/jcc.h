@@ -1,37 +1,73 @@
-#ifndef __JCC_H__
-#define __JCC_H__
+#ifndef	__JCC_H__
+#define	__JCC_H__
 
 make_helper(ja_b);
+make_helper(ja_w);
+make_helper(ja_l);
 make_helper(jae_b);
+make_helper(jae_w);
+make_helper(jae_l);
 make_helper(jb_b);
+make_helper(jb_w);
+make_helper(jb_l);
 make_helper(jbe_b);
+make_helper(jbe_w);
+make_helper(jbe_l);
 make_helper(je_b);
-make_helper(jne_b);
+make_helper(je_w);
+make_helper(je_l);
+make_helper(jecxz_w);
+make_helper(jecxz_l);
 make_helper(jg_b);
+make_helper(jg_w);
+make_helper(jg_l);
 make_helper(jge_b);
+make_helper(jge_w);
+make_helper(jge_l);
 make_helper(jl_b);
+make_helper(jl_w);
+make_helper(jl_l);
 make_helper(jle_b);
+make_helper(jle_w);
+make_helper(jle_l);
+make_helper(jne_b);
+make_helper(jne_w);
+make_helper(jne_l);
 make_helper(jno_b);
+make_helper(jno_w);
+make_helper(jno_l);
 make_helper(jnp_b);
+make_helper(jnp_w);
+make_helper(jnp_l);
 make_helper(jns_b);
+make_helper(jns_w);
+make_helper(jns_l);
 make_helper(jo_b);
+make_helper(jo_w);
+make_helper(jo_l);
 make_helper(jp_b);
+make_helper(jp_w);
+make_helper(jp_l);
 make_helper(js_b);
+make_helper(js_w);
+make_helper(js_l);
 
 make_helper(ja_v);
 make_helper(jae_v);
 make_helper(jb_v);
 make_helper(jbe_v);
 make_helper(je_v);
-make_helper(jne_v);
+make_helper(jecxz_v);
 make_helper(jg_v);
 make_helper(jge_v);
 make_helper(jl_v);
 make_helper(jle_v);
+make_helper(jne_v);
 make_helper(jno_v);
 make_helper(jnp_v);
 make_helper(jns_v);
 make_helper(jo_v);
 make_helper(jp_v);
 make_helper(js_v);
+
 #endif

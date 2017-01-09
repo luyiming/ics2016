@@ -10,7 +10,7 @@ make_helper(seta) {
          reg_b(op_src->reg) = cc;
     }
     else if(op_src->type == OP_TYPE_MEM) {
-        swaddr_write(op_src->addr, 1, cc, op_src->sreg);
+        swaddr_write(op_src->addr, 1, op_src->sreg, cc);
     }
 
     print_asm("seta %s", op_src->str);
@@ -27,7 +27,7 @@ make_helper(setae) {
          reg_b(op_src->reg) = cc;
     }
     else if(op_src->type == OP_TYPE_MEM) {
-        swaddr_write(op_src->addr, 1, cc, op_src->sreg);
+        swaddr_write(op_src->addr, 1, op_src->sreg, cc);
     }
 
     print_asm("setae %s", op_src->str);
@@ -44,7 +44,7 @@ make_helper(setb) {
          reg_b(op_src->reg) = cc;
     }
     else if(op_src->type == OP_TYPE_MEM) {
-        swaddr_write(op_src->addr, 1, cc, op_src->sreg);
+        swaddr_write(op_src->addr, 1, op_src->sreg, cc);
     }
 
     print_asm("setb %s", op_src->str);
@@ -61,7 +61,7 @@ make_helper(setbe) {
          reg_b(op_src->reg) = cc;
     }
     else if(op_src->type == OP_TYPE_MEM) {
-        swaddr_write(op_src->addr, 1, cc, op_src->sreg);
+        swaddr_write(op_src->addr, 1, op_src->sreg, cc);
     }
 
     print_asm("setbe %s", op_src->str);
@@ -78,7 +78,7 @@ make_helper(sete) {
          reg_b(op_src->reg) = cc;
     }
     else if(op_src->type == OP_TYPE_MEM) {
-        swaddr_write(op_src->addr, 1, cc, op_src->sreg);
+        swaddr_write(op_src->addr, 1, op_src->sreg, cc);
     }
 
     print_asm("sete %s", op_src->str);
@@ -95,7 +95,7 @@ make_helper(setne) {
          reg_b(op_src->reg) = cc;
     }
     else if(op_src->type == OP_TYPE_MEM) {
-        swaddr_write(op_src->addr, 1, cc, op_src->sreg);
+        swaddr_write(op_src->addr, 1, op_src->sreg, cc);
     }
 
     print_asm("setne %s", op_src->str);
@@ -112,7 +112,7 @@ make_helper(setg) {
          reg_b(op_src->reg) = cc;
     }
     else if(op_src->type == OP_TYPE_MEM) {
-        swaddr_write(op_src->addr, 1, cc, op_src->sreg);
+        swaddr_write(op_src->addr, 1, op_src->sreg, cc);
     }
 
     print_asm("setg %s", op_src->str);
@@ -129,7 +129,7 @@ make_helper(setge) {
          reg_b(op_src->reg) = cc;
     }
     else if(op_src->type == OP_TYPE_MEM) {
-        swaddr_write(op_src->addr, 1, cc, op_src->sreg);
+        swaddr_write(op_src->addr, 1, op_src->sreg, cc);
     }
 
     print_asm("setge %s", op_src->str);
@@ -146,7 +146,7 @@ make_helper(setl) {
          reg_b(op_src->reg) = cc;
     }
     else if(op_src->type == OP_TYPE_MEM) {
-        swaddr_write(op_src->addr, 1, cc, op_src->sreg);
+        swaddr_write(op_src->addr, 1, op_src->sreg, cc);
     }
 
     print_asm("setl %s", op_src->str);
@@ -163,7 +163,7 @@ make_helper(setle) {
          reg_b(op_src->reg) = cc;
     }
     else if(op_src->type == OP_TYPE_MEM) {
-        swaddr_write(op_src->addr, 1, cc, op_src->sreg);
+        swaddr_write(op_src->addr, 1, op_src->sreg, cc);
     }
 
     print_asm("setle %s", op_src->str);
@@ -180,7 +180,7 @@ make_helper(setno) {
          reg_b(op_src->reg) = cc;
     }
     else if(op_src->type == OP_TYPE_MEM) {
-        swaddr_write(op_src->addr, 1, cc, op_src->sreg);
+        swaddr_write(op_src->addr, 1, op_src->sreg, cc);
     }
 
     print_asm("setno %s", op_src->str);
@@ -197,7 +197,7 @@ make_helper(setnp) {
          reg_b(op_src->reg) = cc;
     }
     else if(op_src->type == OP_TYPE_MEM) {
-        swaddr_write(op_src->addr, 1, cc, op_src->sreg);
+        swaddr_write(op_src->addr, 1, op_src->sreg, cc);
     }
 
     print_asm("setnp %s", op_src->str);
@@ -214,7 +214,7 @@ make_helper(setns) {
          reg_b(op_src->reg) = cc;
     }
     else if(op_src->type == OP_TYPE_MEM) {
-        swaddr_write(op_src->addr, 1, cc, op_src->sreg);
+        swaddr_write(op_src->addr, 1, op_src->sreg, cc);
     }
 
     print_asm("setns %s", op_src->str);
@@ -231,7 +231,7 @@ make_helper(seto) {
          reg_b(op_src->reg) = cc;
     }
     else if(op_src->type == OP_TYPE_MEM) {
-        swaddr_write(op_src->addr, 1, cc, op_src->sreg);
+        swaddr_write(op_src->addr, 1, op_src->sreg, cc);
     }
 
     print_asm("seto %s", op_src->str);
@@ -248,7 +248,7 @@ make_helper(setp) {
          reg_b(op_src->reg) = cc;
     }
     else if(op_src->type == OP_TYPE_MEM) {
-        swaddr_write(op_src->addr, 1, cc, op_src->sreg);
+        swaddr_write(op_src->addr, 1, op_src->sreg, cc);
     }
 
     print_asm("setp %s", op_src->str);
@@ -265,7 +265,7 @@ make_helper(sets) {
          reg_b(op_src->reg) = cc;
     }
     else if(op_src->type == OP_TYPE_MEM) {
-        swaddr_write(op_src->addr, 1, cc, op_src->sreg);
+        swaddr_write(op_src->addr, 1, op_src->sreg, cc);
     }
 
     print_asm("sets %s", op_src->str);
