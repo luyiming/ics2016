@@ -6,6 +6,7 @@
 enum { R_EAX, R_ECX, R_EDX, R_EBX, R_ESP, R_EBP, R_ESI, R_EDI };
 enum { R_AX, R_CX, R_DX, R_BX, R_SP, R_BP, R_SI, R_DI };
 enum { R_AL, R_CL, R_DL, R_BL, R_AH, R_CH, R_DH, R_BH };
+enum { S_ES, S_CS, S_SS, S_DS };
 enum { R_ES, R_CS, R_SS, R_DS };
 
 /* TODO: Re-organize the `CPU_state' structure to match the register
@@ -15,81 +16,55 @@ enum { R_ES, R_CS, R_SS, R_DS };
  * For more details about the register encoding scheme, see i386 manual.
  */
 
-typedef union {
-    struct {
-         uint16_t RPL   :2;
-         uint16_t TI    :1;
-         uint16_t Index:13;
-    };
-    uint16_t val;
- } SegSel;
+ typedef union {
+     struct {
+          uint16_t RPL   :2;
+          uint16_t TI    :1;
+          uint16_t Index:13;
+     };
+     uint16_t val;
+  } SegSel;
 
 typedef struct {
-    union {
-        union {
-            uint32_t _32;
-            uint16_t _16;
-            uint8_t _8[2];
-        } gpr[8];
+	union{
+		union {
+			uint32_t _32;
+			uint16_t _16;
+			uint8_t _8[2];
+		} gpr[8];
 
-        /* Do NOT change the order of the GPRs' definitions. */
-        struct {
-            uint32_t eax, ecx, edx, ebx, esp, ebp, esi, edi;
-        };
-    };
-
-    union {
-        struct {        //    init      description
-            unsigned  CF: 1; // 0 * S   Carry Flag
-            unsigned    : 1; // 1
-            unsigned  PF: 1; // 0 * S   Parity Flag
-            unsigned    : 1; // 0
-            unsigned  AF: 1; // 0   S   Auxiliary Carry Flag
-            unsigned    : 1; // 0
-            unsigned  ZF: 1; // 0 * S   Zero Flag
-            unsigned  SF: 1; // 0 * S   Sign Flag
-            unsigned  TF: 1; // 0   X   Trap Flag
-            unsigned  IF: 1; // 0   X   Interrupt Enable Flag
-            unsigned  DF: 1; // 0   C   Direction Flag
-            unsigned  OF: 1; // 0 * S   Overflow Flag
-            unsigned IOPL:2; // 0   X   I/O Privilege Level
-            unsigned  NT: 1; // 0   X   Nested Task
-            unsigned    : 1; // 0
-            unsigned  RF: 1; // 0   X   Resume Flag
-            unsigned  VM: 1; // 0   X   Virtual-8086 Mode
-            unsigned  AC: 1; // 0   X   Alignment Check
-            unsigned VIF: 1; // 0   X   Virtual Interrupt Flag
-            unsigned VIP: 1; // 0   X   Virtual Interrupt Pending
-            unsigned  ID: 1; // 0   X   Identification Flag
-            unsigned    :10; // 0
-        };
-        uint32_t eflags;
-    };
-
-
-    union{
-        SegSel SR[4];
-        struct {uint16_t ES, CS, SS, DS;}; // initialized to zero
-    };
-
-    struct {
-        bool valid;
-        uint32_t base;
-        uint32_t limit;
-        uint32_t DPL : 2;
-    } SR_cache[4];
-
-    struct {
-        unsigned Limit: 16;
-        unsigned Base : 32;
-    } GDTR;
-
-    struct {
-        unsigned Limit: 16;
-        unsigned Base : 32;
-    } IDTR;
-
-    /* the Control Register 0 */
+	/* Do NOT change the order of the GPRs' definitions. */
+		struct {
+			uint32_t eax;
+			uint32_t ecx;
+			uint32_t edx;
+			uint32_t ebx;
+			uint32_t esp;
+			uint32_t ebp;
+			uint32_t esi;
+			uint32_t edi;
+		};
+	};
+	swaddr_t eip;
+	volatile union {
+		struct {
+			uint32_t CF: 1;
+			uint32_t : 1;
+			uint32_t PF: 1;
+			uint32_t : 1;
+			uint32_t AF: 1;
+			uint32_t : 1;
+			uint32_t ZF: 1;
+			uint32_t SF: 1;
+			uint32_t : 1;
+			uint32_t IF: 1;
+			uint32_t DF: 1;
+			uint32_t OF: 1;
+			uint32_t : 0;
+		};
+		uint32_t eflags;
+	};
+	/* the Control Register 0 */
     union {
         struct {
             uint32_t protect_enable      : 1;
@@ -109,12 +84,8 @@ typedef struct {
         };
         uint32_t val; //initialized to zero
     } CR0;
-
-    /* CR2 is used for handling page faults when PG is set. The processor stores
-     * in CR2 the linear address that triggers the fault.
-     */
-
-    /* the Control Register 3 (physical address of page directory) */
+	#define cr0 CR0.val
+	/* the Control Register 3 (physical address of page directory) */
     union {
         struct {
             uint32_t pad0                : 3;
@@ -125,11 +96,41 @@ typedef struct {
         };
         uint32_t val;
     } CR3;
+	#define cr3 CR3.val;
 
-    bool INTR;
+	union {
+		struct {
+			unsigned Limit: 16;
+	        unsigned Base : 32;
+		};
+        uint64_t val :48;
+    } GDTR;
+	#define gdtr GDTR.val
 
-    swaddr_t eip;
+	union {
+		struct {
+			unsigned Limit: 16;
+	        unsigned Base : 32;
+		};
+        uint64_t val :48;
+    } IDTR;
+	#define idtr IDTR.val
 
+	struct {
+        bool valid;
+        uint32_t base;
+        uint32_t limit;
+        uint32_t DPL : 2;
+    } SR_cache[4];
+
+	union{
+        SegSel SR[4];
+		uint16_t sr[4];
+		struct {uint16_t ES, CS, SS, DS;}; // initialized to zero
+        struct {uint16_t es, cs, ss, ds;};
+    };
+
+	volatile bool INTR;
 } CPU_state;
 
 extern CPU_state cpu;
@@ -139,10 +140,10 @@ static inline int check_reg_index(int index) {
 	return index;
 }
 
+#define sreg(index) (cpu.sr[index])
 #define reg_l(index) (cpu.gpr[check_reg_index(index)]._32)
 #define reg_w(index) (cpu.gpr[check_reg_index(index)]._16)
 #define reg_b(index) (cpu.gpr[check_reg_index(index) & 0x3]._8[index >> 2])
-#define sreg(index) (cpu.SR[check_reg_index(index)].val)
 
 extern const char* regsl[];
 extern const char* regsw[];
