@@ -27,7 +27,7 @@ add_irq_handle(int irq, void (*func)(void) ) {
 	ptr->next = handles[irq]; /* insert into the linked list */
 	handles[irq] = ptr;
 }
-
+void static on_keyboard_event() { in_byte(0x60); }
 void irq_handle(TrapFrame *tf) {
 	/* TODO: Re-organize the `TrapFrame' structure in `include/irq.h'
 	 * to match the trap frame built during `do_irq.S'. Remove the
@@ -48,7 +48,7 @@ void irq_handle(TrapFrame *tf) {
 		assert(irq_id < NR_HARD_INTR);
 		if (irq_id == 1) {
 			// keyboard event
-			in_byte(0x60);
+			on_keyboard_event();
 		}
 		struct IRQ_t *f = handles[irq_id];
 
