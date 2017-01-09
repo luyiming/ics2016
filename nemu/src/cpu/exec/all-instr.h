@@ -49,5 +49,6 @@
 #include "transfer/call.h"
 #include "transfer/jcc.h"
 #include "transfer/jmp.h"
+#include "transfer/iret.h"
 
 #include "special/special.h"

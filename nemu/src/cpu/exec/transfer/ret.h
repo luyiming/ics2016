@@ -3,6 +3,5 @@
 
 make_helper(ret_i_v);
 make_helper(ret_v);
-make_helper(iret);
 
 #endif
