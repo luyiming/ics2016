@@ -7,26 +7,18 @@ uint32_t mm_brk(uint32_t);
 int fs_ioctl(int, uint32_t, void *);
 void serial_printc(char);
 
+void sys_open(TrapFrame *tf);
+void sys_read(TrapFrame *tf);
+void sys_write(TrapFrame *tf);
+void sys_lseek(TrapFrame *tf);
+void sys_close(TrapFrame *tf);
+
 static void sys_brk(TrapFrame *tf) {
 	tf->eax = mm_brk(tf->ebx);
 }
 
 static void sys_ioctl(TrapFrame *tf) {
 	tf->eax = fs_ioctl(tf->ebx, tf->ecx, (void *)tf->edx);
-}
-
-static void sys_write(TrapFrame *tf){
-// ebx:file-descriptor, ecx:str, edx:len
-#ifdef HAS_DEVICE
-	int i;
-	for(i = 0; i < tf->edx; i++)
-		serial_printc(*(char *)(tf->ecx + i));
-#else
-	if(tf->ebx == 1 || tf->ebx == 2) {
-		asm volatile (".byte 0xd6" : : "a"(2), "c"(tf->ecx), "d"(tf->edx));
-	}
-#endif
-	tf->eax = tf->edx;
 }
 
 void do_syscall(TrapFrame *tf) {
@@ -45,6 +37,10 @@ void do_syscall(TrapFrame *tf) {
 		case SYS_brk: sys_brk(tf); break;
 		case SYS_ioctl: sys_ioctl(tf); break;
 		case SYS_write: sys_write(tf); break;
+		case SYS_open: sys_open(tf); break;
+		case SYS_read: sys_read(tf); break;
+		case SYS_lseek: sys_lseek(tf); break;
+		case SYS_close: sys_close(tf); break;
 
 		/* TODO: Add more system calls. */
 
