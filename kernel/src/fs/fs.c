@@ -72,107 +72,94 @@ void init_fs() {
 	}
 }
 
-void sys_write(TrapFrame *tf) {
-	// ebx:file-descriptor, ecx:str, edx:len
-	if (tf->ebx == 1 || tf->ebx == 2) {
-#ifdef HAS_DEVICE
-		int i;
-		for(i = 0; i < tf->edx; i++)
-			serial_printc(*(char *)(tf->ecx + i));
-#else
-		asm volatile (".byte 0xd6" : : "a"(2), "c"(tf->ecx), "d"(tf->edx));
-#endif
-		tf->eax = tf->edx;
-	}
-	else if (tf->ebx > 2 && tf->ebx < NR_FILES + 3) {
-#ifdef DEBUG
-		assert(file_state[tf->ebx].opened);
-		assert(file_state[tf->ebx].offset + tf->edx <= file_table[tf->ebx - 3].size);
-#endif
-		ide_write((void*)tf->ecx,
-				file_table[tf->ebx - 3].disk_offset + file_state[tf->ebx].offset,
-				tf->edx);
-		file_state[tf->ebx].offset += tf->edx;
-		tf->eax = tf->edx;
-	}
-	else {
-		tf->eax = -1;
-	}
-}
 
-void sys_open(TrapFrame *tf) {
-	char *pathname = (char*)tf->ebx;
-	int idx;
-	for (idx = 0; idx < NR_FILES; idx ++) {
-		if (strcmp(pathname, file_table[idx].name) == 0) {
+int fs_open(const char *pathname, int flags) {
+	int i;
+	for (i = 0; i < NR_FILES; i ++) {
+		if (strcmp(pathname, file_table[i].name) == 0) {
 			break;
 		}
 	}
 #ifdef DEBUG
 	Log("%s", pathname);
-	assert(idx < NR_FILES);
+	assert(i < NR_FILES);
 #endif
-	file_state[idx + 3].opened = true;
-	file_state[idx + 3].offset = 0;
-	// return value
-	tf->eax = idx + 3;
+	file_state[i + 3].opened = true;
+	file_state[i + 3].offset = 0;
+
+	return i + 3;
 }
 
-void sys_read(TrapFrame *tf) {
-	if (tf->ebx < 3 || tf->ebx >= NR_FILES + 3) {
-		tf->eax = -1;
-		return;
+int fs_read(int fd, void *buf, int len) {
+	// 0 stdin
+	// 1 stdout
+	// 2 stderr
+	if (fd < 3 || fd >= NR_FILES + 3) {
+		return -1;
 	}
-	assert(file_state[tf->ebx].opened);
-	int len = tf->edx;
-	if (file_state[tf->ebx].offset + tf->edx > file_table[tf->ebx - 3].size) {
-		len = file_table[tf->ebx - 3].size - file_state[tf->ebx].offset;
+	assert(file_state[fd].opened);
+	if (file_state[fd].offset + len > file_table[fd - 3].size) {
+		len = file_table[fd - 3].size - file_state[fd].offset;
 	}
-	ide_read((void*)tf->ecx,
-			file_table[tf->ebx - 3].disk_offset + file_state[tf->ebx].offset,
-			len);
-	file_state[tf->ebx].offset += len;
-	// return value
-	tf->eax = len;
+	ide_read(buf,
+			 file_table[fd - 3].disk_offset + file_state[fd].offset,
+			 len);
+	file_state[fd].offset += len;
+
+	return len;
 }
 
-void sys_lseek(TrapFrame *tf) {
-	if (tf->ebx > 2 && tf->ebx < NR_FILES + 3) {
+int fs_write(int fd, void *buf, int len) {
+	if (fd < 3 || fd >= NR_FILES + 3) {
+		return -1;
+	}
 #ifdef DEBUG
-		assert(file_state[tf->ebx].opened);
+	assert(file_state[fd].opened);
+	assert(file_state[fd].offset + len <= file_table[fd - 3].size);
 #endif
-		switch (tf->edx) {
+	ide_write(buf,
+			  file_table[fd - 3].disk_offset + file_state[fd].offset,
+			  len);
+	file_state[fd].offset += len;
+	return len;
+}
+
+int fs_lseek(int fd, int offset, int whence) {
+	if (fd > 2 && fd < NR_FILES + 3) {
+#ifdef DEBUG
+		assert(file_state[fd].opened);
+#endif
+		switch (whence) {
 			case SEEK_SET:
-				file_state[tf->ebx].offset = tf->ecx;
+				file_state[fd].offset = offset;
 				break;
 			case SEEK_CUR:
-				file_state[tf->ebx].offset += tf->ecx;
+				file_state[fd].offset += offset;
 				break;
 			case SEEK_END:
-				file_state[tf->ebx].offset = file_table[tf->ebx - 3].size - tf->ecx;
+				file_state[fd].offset = file_table[fd - 3].size - offset;
 				break;
 			default: assert(0);
 		}
 #ifdef DEBUG
-		assert(file_state[tf->ebx].offset >= 0 &&
-				file_state[tf->ebx].offset <= file_table[tf->ebx - 3].size);
+		assert(file_state[fd].offset >= 0 && file_state[fd].offset <= file_table[fd - 3].size);
 #endif
-		tf->eax = file_state[tf->ebx].offset;
+		return file_state[fd].offset;
 	}
 	else {
-		tf->eax = -1;
+		return -1;
 	}
 }
 
-void sys_close(TrapFrame * tf) {
-	if (tf->ebx > 2 && tf->ebx < NR_FILES + 3) {
+int fs_close(int fd) {
+	if (fd > 2 && fd < NR_FILES + 3) {
 #ifdef DEBUG
-		assert(file_state[tf->ebx].opened);
+		assert(file_state[fd].opened);
 #endif
-		file_state[tf->ebx].opened = false;
-		tf->eax = 0;
+		file_state[fd].opened = false;
+		return 0;
 	}
 	else {
-		tf->eax = -1;
+		return -1;
 	}
 }
