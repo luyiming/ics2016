@@ -17,54 +17,36 @@ void init_tlb();
 
 make_helper(mov_r2cr) {
 	ModR_M m;
-#ifdef DEBUG
-	char *cr_name;
-#endif
 	m.val = instr_fetch(eip + 1, 1);
 	uint32_t src = reg_l(m.R_M);
 	switch (m.reg) {
 		case 0:	cpu.CR0.val = src;
-#ifdef DEBUG
-				cr_name = "cr0";
-#endif
 				break;
 		case 3:
 			cpu.CR3.val = src;
-#ifdef DEBUG
-			cr_name = "cr3";
-#endif
 			init_tlb();
 			break;
 		default: assert(0);
 	}
 
-	print_asm("mov %%%s,%%%s", regsl[m.R_M], cr_name);
+	print_asm("mov %%%s, cr%d", regsl[m.R_M], m.reg);
 	return 2;
 }
 
 make_helper(mov_cr2r) {
 	ModR_M m;
-#ifdef DEBUG
-	char *cr_name;
-#endif
 	m.val = instr_fetch(eip + 1, 1);
 	uint32_t src;
 	switch (m.reg) {
 		case 0: src = cpu.CR0.val;
-#ifdef DEBUG
-				cr_name = "cr0";
-#endif
 				break;
 		case 3: src = cpu.CR3.val;
-#ifdef DEBUG
-				cr_name = "cr3";
-#endif
 				break;
 		default: assert(0);
 	}
 	reg_l(m.R_M) = src;
 
-	print_asm("mov %%%s,%%%s", cr_name, regsl[m.R_M]);
+	print_asm("mov cr%d, %%%s", m.reg, regsl[m.R_M]);
 	return 2;
 }
 
