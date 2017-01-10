@@ -36,25 +36,54 @@ typedef struct {
 			uint32_t edi;
 		};
 	};
-	swaddr_t eip;
 	volatile union {
 		struct {
 			uint32_t CF: 1;
-			uint32_t : 1;
+			uint32_t   : 1;
 			uint32_t PF: 1;
-			uint32_t : 1;
+			uint32_t   : 1;
 			uint32_t AF: 1;
-			uint32_t : 1;
+			uint32_t   : 1;
 			uint32_t ZF: 1;
 			uint32_t SF: 1;
-			uint32_t : 1;
+			uint32_t   : 1;
 			uint32_t IF: 1;
 			uint32_t DF: 1;
 			uint32_t OF: 1;
-			uint32_t : 0;
+			uint32_t   : 0;
 		};
 		uint32_t eflags;
 	};
+
+	union {
+		struct {
+			unsigned Limit: 16;
+	        unsigned Base : 32;
+		};
+        uint64_t val : 48;
+    } GDTR;
+
+	union {
+		struct {
+			unsigned Limit: 16;
+	        unsigned Base : 32;
+		};
+        uint64_t val : 48;
+    } IDTR;
+
+	struct {
+        uint32_t base  : 32;
+        uint32_t limit : 32;
+        uint8_t  DPL   : 2;
+		bool valid     : 1;
+    } seg_cache[4];
+
+	/* the Segment Register */
+	union{
+        SegSelector SR[4];
+		struct {uint16_t ES, CS, SS, DS;}; // initialized to zero
+    };
+
 	/* the Control Register 0 */
     union {
         struct {
@@ -75,6 +104,7 @@ typedef struct {
         };
         uint32_t val; //initialized to zero
     } CR0;
+
 	/* the Control Register 3 (physical address of page directory) */
     union {
         struct {
@@ -87,34 +117,7 @@ typedef struct {
         uint32_t val;
     } CR3;
 
-	union {
-		struct {
-			unsigned Limit: 16;
-	        unsigned Base : 32;
-		};
-        uint64_t val :48;
-    } GDTR;
-
-	union {
-		struct {
-			unsigned Limit: 16;
-	        unsigned Base : 32;
-		};
-        uint64_t val :48;
-    } IDTR;
-
-	struct {
-        bool valid;
-        uint32_t base;
-        uint32_t limit;
-        uint32_t DPL : 2;
-    } seg_cache[4];
-
-	union{
-        SegSelector SR[4];
-		struct {uint16_t ES, CS, SS, DS;}; // initialized to zero
-    };
-
+	swaddr_t eip;
 	volatile bool INTR;
 } CPU_state;
 
