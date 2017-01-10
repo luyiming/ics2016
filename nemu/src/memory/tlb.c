@@ -1,7 +1,6 @@
 #include "common.h"
 #include "stdlib.h"
 #include "time.h"
-#include "../../lib-common/x86-inc/mmu.h"
 
 PTE page_read(lnaddr_t);
 
@@ -17,9 +16,10 @@ PTE page_read(lnaddr_t);
 #define TLB_OFFSET(addr) (addr & ((1 << OFFSET_WIDTH) - 1))
 
 typedef	struct {
-	PTE pte;
-	uint32_t tag : TAG_WIDTH;
 	bool valid;
+	uint32_t tag : TAG_WIDTH;
+	PTE pte;
+
 } TLB_Block_t;
 
 static TLB_Block_t tlb[NR_LINE];
@@ -41,12 +41,14 @@ hwaddr_t tlb_read(lnaddr_t addr) {
 			return (tlb[i].pte.page_frame << 12) + TLB_OFFSET(addr);
 		}
 	}
-	if (i == NR_LINE){
+
+	if (i == NR_LINE) {
 		srand(time(0));
 		i = rand() % NR_LINE;
 	}
 	tlb[i].valid = true;
-	tlb[i].tag = TLB_TAG(addr);
-	tlb[i].pte = page_read(addr);
+	tlb[i].tag   = TLB_TAG(addr);
+	tlb[i].pte   = page_read(addr);
+
 	return (tlb[i].pte.page_frame << 12) + TLB_OFFSET(addr);
 }
