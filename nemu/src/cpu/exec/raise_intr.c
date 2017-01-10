@@ -17,7 +17,7 @@ void raise_intr(uint8_t NO) {
 	
 	lnaddr_t addr_desc = (cpu.idtr >> 16) + (NO << 3);
 	cpu.cs = lnaddr_read(addr_desc + 2, 2);
-	desc_add(S_CS);
+	desc_add(R_CS);
 	cpu.eip = (lnaddr_read(addr_desc + 6, 2) << 16) + lnaddr_read(addr_desc, 2);
 
 	/* jump back to cpu_exec() */

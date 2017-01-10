@@ -3,7 +3,7 @@
 make_helper(concat(scas_, SUFFIX)) {
 	swaddr_t des = reg_l(R_EDI);
 	int inc = (cpu.DF == 0 ? DATA_BYTE : - DATA_BYTE), i, count = 0;
-	DATA_TYPE r = REG(R_EAX), d = MEM_R(des, S_ES), temp;
+	DATA_TYPE r = REG(R_EAX), d = MEM_R(des, R_ES), temp;
 	temp = r - d;
 	reg_l(R_EDI) += inc;
 

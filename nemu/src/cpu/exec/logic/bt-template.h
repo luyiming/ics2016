@@ -7,7 +7,7 @@ make_helper(concat(bt_r2rm_, SUFFIX)) {
 		source = op_dest->val;
 	}
 	else {
-		source = swaddr_read(op_dest->addr + op_src->val / (DATA_BYTE * 8), DATA_BYTE, S_DS);
+		source = swaddr_read(op_dest->addr + op_src->val / (DATA_BYTE * 8), DATA_BYTE, R_DS);
 	}
 	bit = op_src->val % (DATA_BYTE * 8);
 	source >>= (bit / 8) * 8;
@@ -28,7 +28,7 @@ make_helper(concat(bt_i2rm_, SUFFIX)) {
 		source = op_src->val;
 	}
 	else {
-		source = swaddr_read(op_src->addr + offset / (DATA_BYTE * 8), DATA_BYTE, S_DS);
+		source = swaddr_read(op_src->addr + offset / (DATA_BYTE * 8), DATA_BYTE, R_DS);
 	}
 	bit = offset % (DATA_BYTE * 8);
 	source >>= (bit / 8) * 8;

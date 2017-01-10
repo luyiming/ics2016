@@ -5,7 +5,7 @@
 extern CPU_state cpu;
 
 static void do_execute() {
-	cpu.eip = (DATA_TYPE)MEM_R(REG(R_ESP), S_SS);
+	cpu.eip = (DATA_TYPE)MEM_R(REG(R_ESP), R_SS);
 	REG(R_ESP) += DATA_BYTE;
 	/* to print asm in helper func */
 }

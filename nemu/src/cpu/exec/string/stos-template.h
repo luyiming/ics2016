@@ -3,7 +3,7 @@
 make_helper(concat(stos_, SUFFIX)) {
 	swaddr_t des = reg_l(R_EDI);
 	int inc = (cpu.DF == 0 ? DATA_BYTE : - DATA_BYTE);
-	MEM_W(des, S_ES, REG(R_EAX));
+	MEM_W(des, R_ES, REG(R_EAX));
 	reg_l(R_EDI) += inc;
 
 	print_asm("stos" str(SUFFIX));

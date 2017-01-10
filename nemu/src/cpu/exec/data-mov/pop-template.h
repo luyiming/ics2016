@@ -3,7 +3,7 @@
 #define	instr	pop
 
 static void do_execute() {
-	OPERAND_W(op_src, MEM_R(REG(R_ESP), S_SS));
+	OPERAND_W(op_src, MEM_R(REG(R_ESP), R_SS));
 	REG(R_ESP) += DATA_BYTE;
 	print_asm_template1();
 }
@@ -16,7 +16,7 @@ make_helper(concat(popa_, SUFFIX)) {
 	int i;
 	for (i = 7; i >= 0; i --) {
 		if (R_EAX + i != R_ESP) {
-			REG(R_EAX + i) = MEM_R(REG(R_ESP), S_SS);
+			REG(R_EAX + i) = MEM_R(REG(R_ESP), R_SS);
 		}
 		REG(R_ESP) += DATA_BYTE;
 	}

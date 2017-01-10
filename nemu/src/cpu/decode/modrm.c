@@ -8,14 +8,14 @@ int load_addr(swaddr_t eip, ModR_M *m, Operand *rm) {
 	int instr_len, disp_offset, disp_size = 4;
 	int base_reg = -1, index_reg = -1, scale = 0;
 	swaddr_t addr = 0;
-	rm->sreg = S_DS; /* default */
+	rm->sreg = R_DS; /* default */
 
 	if(m->R_M == R_ESP) {
 		SIB s;
 		s.val = instr_fetch(eip + 1, 1);
 		base_reg = s.base;
 		if (s.base == R_EBP) {
-			rm->sreg = S_SS;
+			rm->sreg = R_SS;
 		}
 		disp_offset = 2;
 		scale = s.ss;
@@ -24,7 +24,7 @@ int load_addr(swaddr_t eip, ModR_M *m, Operand *rm) {
 		{ 
 			index_reg = s.index; 
 			if (s.index == R_EBP) {
-				rm->sreg = S_SS;
+				rm->sreg = R_SS;
 			}
 		}
 	}
@@ -32,7 +32,7 @@ int load_addr(swaddr_t eip, ModR_M *m, Operand *rm) {
 		/* no SIB */
 		base_reg = m->R_M;
 		if (m->R_M == R_EBP) {
-			rm->sreg = S_SS;
+			rm->sreg = R_SS;
 		}
 		disp_offset = 1;
 	}
@@ -41,7 +41,7 @@ int load_addr(swaddr_t eip, ModR_M *m, Operand *rm) {
 		if(base_reg == R_EBP) 
 		{ 
 			base_reg = -1; 
-			rm->sreg = S_DS;
+			rm->sreg = R_DS;
 		}
 		else { disp_size = 0; }
 	}

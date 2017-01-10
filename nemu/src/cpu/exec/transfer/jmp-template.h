@@ -41,7 +41,7 @@ make_helper(concat(jmp_ptr_, SUFFIX)) {
 		len += 4;
 	}
 	uint16_t sltor = instr_fetch(eip + len, 2);
-	sreg(S_CS) = sltor;
+	sreg(R_CS) = sltor;
 
 	cpu.eip -= len;
 	print_asm("ljmp $0x%x,$0x%x", sltor, xip);

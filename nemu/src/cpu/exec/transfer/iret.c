@@ -7,7 +7,7 @@ make_helper(iret) {
 	cpu.eip = swaddr_read(cpu.esp, 4, R_SS) - 1; //函数返回后eip会增加1
 	cpu.esp += 4;
 
-	desc_add(S_CS);
+	desc_add(R_CS);
 	cpu.CS = swaddr_read(cpu.esp, 4, R_SS);
 	cpu.esp += 4;
 

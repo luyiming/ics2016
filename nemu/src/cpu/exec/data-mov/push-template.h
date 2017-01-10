@@ -13,7 +13,7 @@ static void do_execute() {
 		reg_l(R_SP) -= dec;
 	}
 	des = (DATA_BYTE == 2 ? reg_w(R_SP) : reg_l(R_ESP));
-	swaddr_write(des, dec, S_SS, src); 
+	swaddr_write(des, dec, R_SS, src); 
 	
 	print_asm_template1();
 }
@@ -29,10 +29,10 @@ make_helper(concat(pusha_, SUFFIX)) {
 	for (i = 0; i < 8; i ++) {
 		REG(R_ESP) -= DATA_BYTE;
 		if (R_EAX + i == R_ESP) {
-			MEM_W(REG(R_ESP), S_SS, temp);
+			MEM_W(REG(R_ESP), R_SS, temp);
 		}
 		else {
-			MEM_W(REG(R_ESP), S_SS, REG(R_EAX + i));
+			MEM_W(REG(R_ESP), R_SS, REG(R_EAX + i));
 		}
 	}
 	
