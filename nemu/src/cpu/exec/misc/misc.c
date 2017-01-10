@@ -56,7 +56,7 @@ make_helper(lgdt) {
 	if (ops_decoded.is_operand_size_16) {
 		base = (base & 0x00ffffff);
 	}
-	cpu.gdtr = ((uint64_t)base << 16) | limit;
+	cpu.GDTR.val = ((uint64_t)base << 16) | limit;
 
 	print_asm("lgdt 0x%x", op_src->addr);
 	return 1 + len;
@@ -72,7 +72,7 @@ make_helper(lidt) {
 	if (ops_decoded.is_operand_size_16) {
 		base = (base & 0x00ffffff);
 	}
-	cpu.idtr = ((uint64_t)base << 16) | limit;
+	cpu.IDTR.val = ((uint64_t)base << 16) | limit;
 
 	print_asm("lidt 0x%x", op_src->addr);
 	return 1 + len;

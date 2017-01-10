@@ -104,7 +104,6 @@ typedef struct {
 		};
         uint64_t val :48;
     } GDTR;
-	#define gdtr GDTR.val
 
 	union {
 		struct {
@@ -113,7 +112,6 @@ typedef struct {
 		};
         uint64_t val :48;
     } IDTR;
-	#define idtr IDTR.val
 
 	struct {
         bool valid;

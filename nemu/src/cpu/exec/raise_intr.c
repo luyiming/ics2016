@@ -15,7 +15,7 @@ void raise_intr(uint8_t NO) {
 	cpu.esp -= 4;
 	swaddr_write(cpu.esp, 4, R_SS, cpu.eip);
 	
-	lnaddr_t addr_desc = (cpu.idtr >> 16) + (NO << 3);
+	lnaddr_t addr_desc = cpu.IDTR.Base + (NO << 3);
 	cpu.cs = lnaddr_read(addr_desc + 2, 2);
 	desc_add(R_CS);
 	cpu.eip = (lnaddr_read(addr_desc + 6, 2) << 16) + lnaddr_read(addr_desc, 2);
