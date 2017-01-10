@@ -67,39 +67,9 @@ Fstate file_state[NR_FILES + 3];
 void init_fs() {
 	memset((void*)file_state, 0, sizeof(file_state));
 	int i = 0;
-	for (i = 0; i < 3; i ++) {file_state[i].opened = true;}
-}
-
-void sys_open(TrapFrame *tf) {
-	int idx;
-	for (idx = 0; idx < NR_FILES; idx ++) {
-		if (strcmp((char*)tf->ebx, file_table[idx].name) == 0) {
-			break;
-		}
+	for (i = 0; i < 3; i ++) {
+		file_state[i].opened = true;
 	}
-	assert(idx < NR_FILES);
-	file_state[idx + 3].opened = true;
-	file_state[idx + 3].offset = 0;
-	tf->eax = idx + 3;
-}
-
-void sys_read(TrapFrame *tf) {
-	if (tf->ebx < 3 || tf->ebx >= NR_FILES + 3) {
-		tf->eax = -1;
-		return;
-	}
-	assert(file_state[tf->ebx].opened);
-	int len = tf->edx;
-	if (file_state[tf->ebx].offset + tf->edx
-			> file_table[tf->ebx - 3].size) {
-		len = file_table[tf->ebx - 3].size
-			- file_state[tf->ebx].offset;
-	}
-	ide_read((void*)tf->ecx,
-			file_table[tf->ebx - 3].disk_offset + file_state[tf->ebx].offset,
-			len);
-	file_state[tf->ebx].offset += len;
-	tf->eax = len;
 }
 
 void sys_write(TrapFrame *tf) {
@@ -115,9 +85,10 @@ void sys_write(TrapFrame *tf) {
 		tf->eax = tf->edx;
 	}
 	else if (tf->ebx > 2 && tf->ebx < NR_FILES + 3) {
+#ifdef DEBUG
 		assert(file_state[tf->ebx].opened);
-		assert(file_state[tf->ebx].offset + tf->edx
-				<= file_table[tf->ebx - 3].size);
+		assert(file_state[tf->ebx].offset + tf->edx <= file_table[tf->ebx - 3].size);
+#endif
 		ide_write((void*)tf->ecx,
 				file_table[tf->ebx - 3].disk_offset + file_state[tf->ebx].offset,
 				tf->edx);
@@ -129,9 +100,47 @@ void sys_write(TrapFrame *tf) {
 	}
 }
 
+void sys_open(TrapFrame *tf) {
+	char *pathname = (char*)tf->ebx;
+	int idx;
+	for (idx = 0; idx < NR_FILES; idx ++) {
+		if (strcmp(pathname, file_table[idx].name) == 0) {
+			break;
+		}
+	}
+#ifdef DEBUG
+	Log("%s", pathname);
+	assert(idx < NR_FILES);
+#endif
+	file_state[idx + 3].opened = true;
+	file_state[idx + 3].offset = 0;
+	// return value
+	tf->eax = idx + 3;
+}
+
+void sys_read(TrapFrame *tf) {
+	if (tf->ebx < 3 || tf->ebx >= NR_FILES + 3) {
+		tf->eax = -1;
+		return;
+	}
+	assert(file_state[tf->ebx].opened);
+	int len = tf->edx;
+	if (file_state[tf->ebx].offset + tf->edx > file_table[tf->ebx - 3].size) {
+		len = file_table[tf->ebx - 3].size - file_state[tf->ebx].offset;
+	}
+	ide_read((void*)tf->ecx,
+			file_table[tf->ebx - 3].disk_offset + file_state[tf->ebx].offset,
+			len);
+	file_state[tf->ebx].offset += len;
+	// return value
+	tf->eax = len;
+}
+
 void sys_lseek(TrapFrame *tf) {
 	if (tf->ebx > 2 && tf->ebx < NR_FILES + 3) {
+#ifdef DEBUG
 		assert(file_state[tf->ebx].opened);
+#endif
 		switch (tf->edx) {
 			case SEEK_SET:
 				file_state[tf->ebx].offset = tf->ecx;
@@ -140,14 +149,14 @@ void sys_lseek(TrapFrame *tf) {
 				file_state[tf->ebx].offset += tf->ecx;
 				break;
 			case SEEK_END:
-				file_state[tf->ebx].offset =
-					file_table[tf->ebx - 3].size - tf->ecx;
+				file_state[tf->ebx].offset = file_table[tf->ebx - 3].size - tf->ecx;
 				break;
 			default: assert(0);
 		}
+#ifdef DEBUG
 		assert(file_state[tf->ebx].offset >= 0 &&
-				file_state[tf->ebx].offset
-				<= file_table[tf->ebx - 3].size);
+				file_state[tf->ebx].offset <= file_table[tf->ebx - 3].size);
+#endif
 		tf->eax = file_state[tf->ebx].offset;
 	}
 	else {
@@ -157,7 +166,9 @@ void sys_lseek(TrapFrame *tf) {
 
 void sys_close(TrapFrame * tf) {
 	if (tf->ebx > 2 && tf->ebx < NR_FILES + 3) {
+#ifdef DEBUG
 		assert(file_state[tf->ebx].opened);
+#endif
 		file_state[tf->ebx].opened = false;
 		tf->eax = 0;
 	}
