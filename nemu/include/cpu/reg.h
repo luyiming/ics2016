@@ -75,7 +75,6 @@ typedef struct {
         };
         uint32_t val; //initialized to zero
     } CR0;
-	#define cr0 CR0.val
 	/* the Control Register 3 (physical address of page directory) */
     union {
         struct {
@@ -87,7 +86,6 @@ typedef struct {
         };
         uint32_t val;
     } CR3;
-	#define cr3 CR3.val;
 
 	union {
 		struct {
