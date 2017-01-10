@@ -16,15 +16,6 @@ enum { R_ES, R_CS, R_SS, R_DS };
  * For more details about the register encoding scheme, see i386 manual.
  */
 
- typedef union {
-     struct {
-          uint16_t RPL   :2;
-          uint16_t TI    :1;
-          uint16_t Index:13;
-     };
-     uint16_t val;
-  } SegSel;
-
 typedef struct {
 	union{
 		union {
@@ -122,7 +113,7 @@ typedef struct {
     } seg_cache[4];
 
 	union{
-        SegSel SR[4];
+        SegSelector SR[4];
 		struct {uint16_t ES, CS, SS, DS;}; // initialized to zero
     };
 
