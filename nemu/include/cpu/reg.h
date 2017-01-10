@@ -72,8 +72,8 @@ typedef struct {
     } IDTR;
 
 	struct {
-        uint32_t base  : 32;
-        uint32_t limit : 32;
+        uint32_t Base  : 32;
+        uint32_t Limit : 32;
         uint8_t  DPL   : 2;
 		bool valid     : 1;
     } seg_cache[4];

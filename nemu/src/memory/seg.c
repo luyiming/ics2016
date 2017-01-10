@@ -4,8 +4,8 @@ void init_seg() {
 	int i;
 	for(i = 0; i < 4; ++i)
 		cpu.seg_cache[i].valid = 0;
-	cpu.seg_cache[R_CS].base = 0;
-	cpu.seg_cache[R_CS].limit = 0xffffffff;
+	cpu.seg_cache[R_CS].Base = 0;
+	cpu.seg_cache[R_CS].Limit = 0xffffffff;
 }
 
 #define load_sreg desc_add
@@ -20,13 +20,13 @@ void desc_add(uint32_t sreg) {
     }
 	//printf("\n");
     SegDesc *segdesc = (SegDesc*)tmp;
-    uint32_t limit = (segdesc->limit_19_16 << 16) + segdesc->limit_15_0;
-	uint32_t base = (segdesc->base_31_24 << 24) + (segdesc->base_23_16 << 16) + segdesc->base_15_0;
+    uint32_t Limit = (segdesc->limit_19_16 << 16) + segdesc->limit_15_0;
+	uint32_t Base = (segdesc->base_31_24 << 24) + (segdesc->base_23_16 << 16) + segdesc->base_15_0;
 	//Assert(segdesc->present == 1, "Segdesc is not valid! 0x%x", cpu.GDTR.Base + cpu.SR[sreg].Index * 8);
-	//Assert(cpu.SR[sreg].Index * 8 < limit, "Segment overflow: limit %d", limit);
+	//Assert(cpu.SR[sreg].Index * 8 < Limit, "Segment overflow: Limit %d", Limit);
 	cpu.seg_cache[sreg].valid = true;
-	cpu.seg_cache[sreg].limit = limit;
-	cpu.seg_cache[sreg].base = base;
+	cpu.seg_cache[sreg].Limit = Limit;
+	cpu.seg_cache[sreg].Base = Base;
 	cpu.seg_cache[sreg].DPL = segdesc->privilege_level;
 }
 
@@ -42,5 +42,5 @@ lnaddr_t seg_translate(swaddr_t addr, size_t len, uint8_t sreg) {
 
     if(cpu.seg_cache[sreg].valid == 0)
         desc_add(sreg);
-	return cpu.seg_cache[sreg].base + addr;
+	return cpu.seg_cache[sreg].Base + addr;
 }
