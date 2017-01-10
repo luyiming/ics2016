@@ -3,9 +3,9 @@
 void init_seg() {
 	int i;
 	for(i = 0; i < 4; ++i)
-		cpu.SR_cache[i].valid = 0;
-	cpu.SR_cache[R_CS].base = 0;
-	cpu.SR_cache[R_CS].limit = 0xffffffff;
+		cpu.seg_cache[i].valid = 0;
+	cpu.seg_cache[R_CS].base = 0;
+	cpu.seg_cache[R_CS].limit = 0xffffffff;
 }
 
 #define load_sreg desc_add
@@ -24,10 +24,10 @@ void desc_add(uint32_t sreg) {
 	uint32_t base = (segdesc->base_31_24 << 24) + (segdesc->base_23_16 << 16) + segdesc->base_15_0;
 	//Assert(segdesc->present == 1, "Segdesc is not valid! 0x%x", cpu.GDTR.Base + cpu.SR[sreg].Index * 8);
 	//Assert(cpu.SR[sreg].Index * 8 < limit, "Segment overflow: limit %d", limit);
-	cpu.SR_cache[sreg].valid = true;
-	cpu.SR_cache[sreg].limit = limit;
-	cpu.SR_cache[sreg].base = base;
-	cpu.SR_cache[sreg].DPL = segdesc->privilege_level;
+	cpu.seg_cache[sreg].valid = true;
+	cpu.seg_cache[sreg].limit = limit;
+	cpu.seg_cache[sreg].base = base;
+	cpu.seg_cache[sreg].DPL = segdesc->privilege_level;
 }
 
 lnaddr_t seg_translate(swaddr_t addr, size_t len, uint8_t sreg) {
@@ -40,7 +40,7 @@ lnaddr_t seg_translate(swaddr_t addr, size_t len, uint8_t sreg) {
     if(cpu.CR0.protect_enable == 0)
         return addr;
 
-    if(cpu.SR_cache[sreg].valid == 0)
+    if(cpu.seg_cache[sreg].valid == 0)
         desc_add(sreg);
-	return cpu.SR_cache[sreg].base + addr;
+	return cpu.seg_cache[sreg].base + addr;
 }
