@@ -28,23 +28,22 @@ make_helper(concat(jmp_rm_, SUFFIX)) {
 }
 
 make_helper(concat(ljmp_, SUFFIX)) {
-	uint32_t xip;
+	uint32_t jmp_addr;
 	int len = 1;
 	if (ops_decoded.is_operand_size_16) {
-		xip = instr_fetch(eip + 1, 2);
-		cpu.eip = xip;
+		jmp_addr = instr_fetch(eip + 1, 2);
 		len += 2;
 	}
 	else {
-		xip = instr_fetch(eip + 1, 4);
-		cpu.eip = xip;
+		jmp_addr = instr_fetch(eip + 1, 4);
 		len += 4;
 	}
+	cpu.eip = jmp_addr - len;
+
 	uint16_t sel = instr_fetch(eip + len, 2);
 	sreg(R_CS) = sel;
 
-	cpu.eip -= len;
-	print_asm("ljmp $0x%x,$0x%x", sel, xip);
+	print_asm("ljmp $0x%x,$0x%x", sel, jmp_addr);
 	return len;
 }
 

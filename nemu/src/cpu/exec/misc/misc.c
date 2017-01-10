@@ -28,9 +28,8 @@ make_helper(int_i) {
 }
 
 make_helper(hlt) {
-	while (cpu.IF && (!cpu.INTR)) {
-		/* nop */;
-	}
+	while (cpu.IF && (!cpu.INTR))
+		; // halt
 
 	print_asm("hlt");
 	return 1;
@@ -51,8 +50,10 @@ make_helper(lgdt) {
 	ModR_M m;
 	m.val = instr_fetch(eip + 1, 1);
 	int len = load_addr(eip + 1, &m, op_src);
+
 	uint16_t limit = lnaddr_read(op_src->addr, 2);
 	uint32_t base = lnaddr_read(op_src->addr + 2, 4);
+
 	if (ops_decoded.is_operand_size_16) {
 		base = (base & 0x00ffffff);
 	}
@@ -67,8 +68,10 @@ make_helper(lidt) {
 	ModR_M m;
 	m.val = instr_fetch(eip + 1, 1);
 	int len = load_addr(eip + 1, &m, op_src);
+
 	uint16_t limit = lnaddr_read(op_src->addr, 2);
 	uint32_t base = lnaddr_read(op_src->addr + 2, 4);
+
 	if (ops_decoded.is_operand_size_16) {
 		base = (base & 0x00ffffff);
 	}
