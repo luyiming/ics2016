@@ -8,8 +8,7 @@ void init_seg() {
 	cpu.seg_cache[R_CS].Limit = 0xffffffff;
 }
 
-#define load_sreg desc_add
-void desc_add(uint32_t sreg) {
+void add_sreg(uint32_t sreg) {
 	// load seg_descriptor into cache
     uint8_t tmp[8];
 	int i;
@@ -37,6 +36,6 @@ lnaddr_t seg_translate(swaddr_t addr, size_t len, uint8_t sreg) {
         return addr;
 
     if(cpu.seg_cache[sreg].valid == 0)
-        desc_add(sreg);
+        add_sreg(sreg);
 	return cpu.seg_cache[sreg].Base + addr;
 }

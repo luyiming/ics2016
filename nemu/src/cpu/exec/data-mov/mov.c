@@ -50,13 +50,13 @@ make_helper(mov_cr2r) {
 	return 2;
 }
 
-void desc_add(uint8_t);
+void add_sreg(uint8_t);
 
 make_helper(mov_rm2s_l) {
 	int len = 1 + decode_rm2r_w(eip + 1);
 	uint8_t sr = op_dest->reg;
 	sreg(sr) = (uint16_t)op_src->val;
-	desc_add(sr);
+	add_sreg(sr);
 
 	print_asm("movw %s,%%%s", op_src->str, sregs[sr]);
 	return len;
