@@ -5,18 +5,18 @@ uint32_t dram_read(hwaddr_t, size_t);
 void dram_write(hwaddr_t, size_t, uint32_t);
 
 #define CACHE_WIDTH 22
-#define CACHE_SIZE (4 << 20)
-#define COL_WIDTH 6
-#define ROW_WIDTH 4
-#define SET_WIDTH 12  // == (CACHE_WIDTH - COL_WIDTH - ROW_WIDTH)
-#define TAG_WIDTH (27 - COL_WIDTH - SET_WIDTH)
+#define CACHE_SIZE  (4 << 20)
+#define COL_WIDTH   6
+#define ROW_WIDTH   4
+#define SET_WIDTH   12  // == (CACHE_WIDTH - COL_WIDTH - ROW_WIDTH)
+#define TAG_WIDTH   (27 - COL_WIDTH - SET_WIDTH)
 
 #define NR_COL (1 << COL_WIDTH)
 #define NR_ROW (1 << ROW_WIDTH)
 #define NR_SET (1 << SET_WIDTH)
 
 #define HW_MEM_SIZE (1 << (COL_WIDTH + SET_WIDTH + TAG_WIDTH))
-#define COL_MASK ((1 << COL_WIDTH) - 1)
+#define COL_MASK    ((1 << COL_WIDTH) - 1)
 
 typedef union {
 	struct {

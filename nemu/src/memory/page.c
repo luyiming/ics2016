@@ -4,8 +4,8 @@ void init_tlb();
 hwaddr_t tlb_read(lnaddr_t addr);
 uint32_t hwaddr_read(hwaddr_t, size_t);
 
-#define DIR_ENTRY(addr) ((addr >> 22) & ((1 << 10) - 1))
-#define PAGE_ENTRY(addr) ((addr >> 12) & ((1 << 10) - 1))
+#define DIR_ENTRY(addr)    ((addr >> 22) & ((1 << 10) - 1))
+#define PAGE_ENTRY(addr)   ((addr >> 12) & ((1 << 10) - 1))
 #define IN_PAGE_ADDR(addr) (addr & ((1 << 12) - 1))
 
 PTE page_read(lnaddr_t addr) {

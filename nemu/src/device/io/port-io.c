@@ -28,8 +28,10 @@ static void pio_callback(ioaddr_t addr, size_t len, bool is_write) {
 
 /* device interface */
 void* add_pio_map(ioaddr_t addr, size_t len, pio_callback_t callback) {
+#ifdef DEBUG
 	assert(nr_map < NR_MAP);
 	assert(addr + len <= PORT_IO_SPACE_MAX);
+#endif
 	maps[nr_map].low = addr;
 	maps[nr_map].high = addr + len - 1;
 	maps[nr_map].callback = callback;
@@ -40,17 +42,20 @@ void* add_pio_map(ioaddr_t addr, size_t len, pio_callback_t callback) {
 
 /* CPU interface */
 uint32_t pio_read(ioaddr_t addr, size_t len) {
+#ifdef DEBUG
 	assert(len == 1 || len == 2 || len == 4);
 	assert(addr + len - 1 < PORT_IO_SPACE_MAX);
+#endif
 	pio_callback(addr, len, false);		// prepare data to read
 	uint32_t data = *(uint32_t *)(pio_space + addr) & (~0u >> ((4 - len) << 3));
 	return data;
 }
 
 void pio_write(ioaddr_t addr, size_t len, uint32_t data) {
+#ifdef DEBUG
 	assert(len == 1 || len == 2 || len == 4);
 	assert(addr + len - 1 < PORT_IO_SPACE_MAX);
+#endif
 	memcpy(pio_space + addr, &data, len);
 	pio_callback(addr, len, true);
 }
-

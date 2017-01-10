@@ -5,7 +5,7 @@
 #define MMIO_SPACE_MAX (256 * 1024)
 #define NR_MAP 8
 
-static uint8_t mmio_space_pool[MMIO_SPACE_MAX];
+static uint8_t  mmio_space_pool[MMIO_SPACE_MAX];
 static uint32_t mmio_space_free_index = 0;
 
 typedef struct {
@@ -20,9 +20,10 @@ static int nr_map = 0;
 
 /* device interface */
 void* add_mmio_map(hwaddr_t addr, size_t len, mmio_callback_t callback) {
+#ifdef DEBUG
 	assert(nr_map < NR_MAP);
 	assert(mmio_space_free_index + len <= MMIO_SPACE_MAX);
-
+#endif
 	uint8_t *space_base = &mmio_space_pool[mmio_space_free_index];
 	maps[nr_map].low = addr;
 	maps[nr_map].high = addr + len - 1;
@@ -45,16 +46,19 @@ int is_mmio(hwaddr_t addr) {
 }
 
 uint32_t mmio_read(hwaddr_t addr, size_t len, int map_NO) {
-	// assert(len == 1 || len == 2 || len == 4);
+#ifdef DEBUG
+	//assert(len == 1 || len == 2 || len == 4);
+#endif
 	MMIO_t *map = &maps[map_NO];
-	uint32_t data = *(uint32_t *)(map->mmio_space + (addr - map->low))
-		& (~0u >> ((4 - len) << 3));
+	uint32_t data = *(uint32_t *)(map->mmio_space + (addr - map->low)) & (~0u >> ((4 - len) << 3));
 	map->callback(addr, len, false);
 	return data;
 }
 
 void mmio_write(hwaddr_t addr, size_t len, uint32_t data, int map_NO) {
-	// assert(len == 1 || len == 2 || len == 4);
+#ifdef DEBUG
+	//assert(len == 1 || len == 2 || len == 4);
+#endif
 	MMIO_t *map = &maps[map_NO];
 	uint32_t mask = (~0u >> ((4 - len) << 3));
 	memcpy_with_mask(map->mmio_space + (addr - map->low), &data, len, (void *)&mask);

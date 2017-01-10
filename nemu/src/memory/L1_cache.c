@@ -6,18 +6,18 @@ void L2_cache_write(hwaddr_t addr, size_t len, uint32_t data);
 void debug_L2_cache(hwaddr_t addr);
 
 #define CACHE_WIDTH 16
-#define CACHE_SIZE (64 << 10)
-#define COL_WIDTH 6
-#define ROW_WIDTH 3
-#define SET_WIDTH 7  // == (CACHE_WIDTH - COL_WIDTH - ROW_WIDTH)
-#define TAG_WIDTH (27 - COL_WIDTH - SET_WIDTH)
+#define CACHE_SIZE  (64 << 10)
+#define COL_WIDTH   6
+#define ROW_WIDTH   3
+#define SET_WIDTH   7  // == (CACHE_WIDTH - COL_WIDTH - ROW_WIDTH)
+#define TAG_WIDTH   (27 - COL_WIDTH - SET_WIDTH)
 
 #define NR_COL (1 << COL_WIDTH)
 #define NR_ROW (1 << ROW_WIDTH)
 #define NR_SET (1 << SET_WIDTH)
 
 #define HW_MEM_SIZE (1 << (COL_WIDTH + SET_WIDTH + TAG_WIDTH))
-#define COL_MASK ((1 << COL_WIDTH) - 1)
+#define COL_MASK    ((1 << COL_WIDTH) - 1)
 
 uint64_t cpu_time = 0;
 

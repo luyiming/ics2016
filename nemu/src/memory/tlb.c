@@ -8,9 +8,8 @@ PTE page_read(lnaddr_t);
 #define OFFSET_WIDTH  12
 #define LINE_WIDTH    6
 #define TAG_WIDTH     (ADDRESS_WIDTH - OFFSET_WIDTH)
-
-#define NR_LINE (1 << LINE_WIDTH)
-#define NR_TAG  (1 << TAG_WIDTH)
+#define NR_LINE       (1 << LINE_WIDTH)
+#define NR_TAG        (1 << TAG_WIDTH)
 
 #define TLB_TAG(addr) 	 ((addr >> OFFSET_WIDTH) & ((1 << TAG_WIDTH) - 1))
 #define TLB_OFFSET(addr) (addr & ((1 << OFFSET_WIDTH) - 1))

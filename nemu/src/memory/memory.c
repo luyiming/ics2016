@@ -3,14 +3,14 @@
 #include "stdlib.h"
 
 uint32_t dram_read(hwaddr_t, size_t);
-void dram_write(hwaddr_t, size_t, uint32_t);
+void     dram_write(hwaddr_t, size_t, uint32_t);
 uint32_t cache_read(hwaddr_t addr, size_t len);
-void cache_write(hwaddr_t addr, size_t len, uint32_t data);
+void     cache_write(hwaddr_t addr, size_t len, uint32_t data);
 lnaddr_t seg_translate(swaddr_t addr, size_t len, uint8_t sreg);
 hwaddr_t page_translate(lnaddr_t addr);
 
 uint32_t mmio_read(hwaddr_t, size_t, int);
-void mmio_write(hwaddr_t, size_t, uint32_t, int);
+void     mmio_write(hwaddr_t, size_t, uint32_t, int);
 uint32_t is_mmio(hwaddr_t);
 
 /* Memory accessing interfaces */
@@ -57,7 +57,6 @@ void lnaddr_write(lnaddr_t addr, size_t len, uint32_t data) {
 	if(cpu.CR0.paging == 0)
 		return hwaddr_write(addr, len, data);
 	if ((addr & 0xfff) + len > 0x1000) {
-		//assert(0);
         int first = 0x1000 - (addr & 0xfff);
         int second = len - first;
         lnaddr_write(addr, first, data);
