@@ -88,7 +88,7 @@ process_keys(void (*key_press_callback)(int), void (*key_release_callback)(int))
 		switch (key) {
 			case KEY_STATE_PRESS: {
 				key_press_callback(get_keycode(i));
-	 			Log("press 0x%x", get_keycode(i));
+	 			Log("press   0x%x", get_keycode(i));
 	 			release_key(i);
 	 			ret = true;
 				break;
