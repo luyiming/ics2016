@@ -15,7 +15,7 @@ void p_info_r() {
 		printf("$%-6s%-12u0x%.8x\n", regsl[i], cpu.gpr[i]._32, cpu.gpr[i]._32);
 	}
 	for (i = 0; i < 4; i++) {
-		printf("$%-6s%-12u0x%.8x\n", sregs[i], cpu.sr[i], cpu.sr[i]);
+		printf("$%-6s%-12u0x%.8x\n", sregs[i], cpu.SR[i].val, cpu.SR[i].val);
 	}
 	printf("$%-6s%-12u0x%.8x\n", "eip", cpu.eip, cpu.eip);
 	printf("%-7s[", "flags");
