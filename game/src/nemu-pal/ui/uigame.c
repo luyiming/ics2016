@@ -81,7 +81,7 @@ PAL_OpeningMenu(
 
 --*/
 {
-   WORD          wItemSelected;
+   volatile WORD wItemSelected;
    WORD          wDefaultItem     = 0;
 
    MENUITEM      rgMainMenuItem[2] = {

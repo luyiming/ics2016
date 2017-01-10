@@ -591,8 +591,8 @@ PAL_InterpretInstruction(
 
 --*/
 {
-   LPEVENTOBJECT          pEvtObj, pCurrent;
-   LPSCRIPTENTRY          pScript;
+   volatile LPEVENTOBJECT          pEvtObj, pCurrent;
+   volatile LPSCRIPTENTRY          pScript;
    int                    iPlayerRole, i, j, x, y;
    WORD                   w, wCurEventObjectID;
 
