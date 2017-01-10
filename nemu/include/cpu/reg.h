@@ -123,9 +123,7 @@ typedef struct {
 
 	union{
         SegSel SR[4];
-		uint16_t sr[4];
 		struct {uint16_t ES, CS, SS, DS;}; // initialized to zero
-        struct {uint16_t es, cs, ss, ds;};
     };
 
 	volatile bool INTR;
